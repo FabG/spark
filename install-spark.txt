@@ -1,0 +1,88 @@
+# Some instructions to install Spark locally on Max OSX
+# Reference: http://genomegeek.blogspot.com/2014/11/how-to-install-apache-spark-on-mac-os-x.html 
+
+
+	•	Set JAVA_HOME  
+
+export JAVA_HOME=$(/usr/libexec/java_home) 
+
+
+ 
+	•	Install Homebrew  
+  
+           ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" 
+
+
+
+	•	Install Scala  
+
+brew install scala 
+
+
+
+	•	Set SCALA_HOME  
+
+export SCALA_HOME=/usr/local/bin/scala  
+export PATH=$PATH:$SCALA_HOME/bin 
+
+  
+	•	Download Spark from https://spark.apache.org/downloads.html   
+
+tar -xvzf spark-1.1.1.tar 
+cd spark-1.1.1  
+
+
+	•	Build and Install Apache Spark  
+
+sbt/sbt clean assembly 
+
+
+
+	•	Fire up the Spark  
+
+For the Scala shell: 
+./bin/spark-shell 
+
+For the Python shell: 
+./bin/pyspark 
+
+Fab@MacBookAir-Fab:~/spark-1.5.2$ ./bin/spark-shell
+log4j:WARN No appenders could be found for logger (org.apache.hadoop.metrics2.lib.MutableMetricsFactory).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
+Using Spark's repl log4j profile: org/apache/spark/log4j-defaults-repl.properties
+To adjust logging level use sc.setLogLevel("INFO")
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /___/ .__/\_,_/_/ /_/\_\   version 1.5.2
+      /_/
+
+Using Scala version 2.10.4 (Java HotSpot(TM) 64-Bit Server VM, Java 1.7.0_67)
+Type in expressions to have them evaluated.
+Type :help for more information.
+15/12/30 09:51:29 WARN MetricsSystem: Using default name DAGScheduler for source because spark.app.id is not set.
+Spark context available as sc.
+SQL context available as sqlContext.
+
+scala>
+
+
+	•	Run Examples  
+
+Calculate Pi: 
+
+./bin/run-example org.apache.spark.examples.SparkPi 
+
+MLlib Correlations example: 
+
+./bin/run-example org.apache.spark.examples.mllib.Correlations 
+
+MLlib Linear Regression example: 
+
+./bin/spark-submit 
+--class org.apache.spark.examples.mllib.LinearRegression 
+examples/target/scala-*/spark-*.jar data/mllib/sample_linear_regression_data.txt  
+  
+

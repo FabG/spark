@@ -1,0 +1,733 @@
+# Some of the spark-shell interactive commands I ran
+# based on the lab files and course exercises
+
+
+
+scala> val readme = sc.textFile("/Users/Fab/Downloads/labfiles/README.md")
+readme: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[16] at textFile at <console>:22
+
+=> This was a RDD transformation, thus it return a pointer to a RDD, which we have named as readme. 
+
+scala> readme.count()
+res12: Long = 141
+
+=> This RDD action returns the number of items 
+
+scala> readme.first()
+res13: String = # Apache Spark
+
+=> This RDD action returns the first item
+To confirm:
+Fab@MacBookAir-Fab:~/Downloads/labfiles$ head -2 README.md
+# Apache Spark
+
+scala> val linesWithSpark = readme.filter(line => line.contains("Spark"))
+linesWithSpark: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[17] at filter at <console>:24
+
+=> returns a pointer to a RDD that has the items that contains “Spark”
+There are 21 lines that have “Spark”
+scala> linesWithSpark.count()
+res20: Long = 21
+
+scala> linesWithSpark.collect()
+res21: Array[String] = Array(# Apache Spark, Spark is a fast and general cluster computing system for Big Data. It provides, rich set of higher-level tools including Spark SQL for SQL and structured, and Spark Streaming., You can find the latest Spark documentation, including a programming, ## Building Spark, Spark is built on Scala 2.10. To build Spark and its example programs, run:, The easiest way to start using Spark is through the Scala shell:, Spark also comes with several sample programs in the `examples` directory., "    ./bin/run-example SparkPi", "    MASTER=spark://host:7077 ./bin/run-example SparkPi", Testing first requires [building Spark](#building-spark). Once Spark is built, tests, Spark uses the Hadoop core library to talk to HDFS and other Hadoop-supported, Hadoop, you...
+
+Can also combine transformations and operations:
+scala> readme.filter(line => line.contains("Spark")).count()
+res18: Long = 21
+
+
+Now find the line that has the most words:
+scala> readme.map(line => line.split(" ")).collect()
+res22: Array[Array[String]] = Array(Array(#, Apache, Spark), Array(""), Array(Spark, is, a, fast, and, general, cluster, computing, system, for, Big, Data., It, provides), Array(high-level, APIs, in, Scala,, Java,, and, Python,, and, an, optimized, engine, that), Array(supports, general, computation, graphs, for, data, analysis., It, also, supports, a), Array(rich, set, of, higher-level, tools, including, Spark, SQL, for, SQL, and, structured), Array(data, processing,, MLLib, for, machine, learning,, GraphX, for, graph, processing,), Array(and, Spark, Streaming.), Array(""), Array(<http://spark.apache.org/>), Array(""), Array(""), Array(##, Online, Documentation), Array(""), Array(You, can, find, the, latest, Spark, documentation,, including, a, programming), Array(guide,, on, the, proj...
+
+scala> readme.map(line => line.split(" ").size).collect()
+res23: Array[Int] = Array(3, 1, 14, 12, 11, 12, 10, 3, 1, 1, 1, 1, 3, 1, 10, 7, 8, 1, 3, 1, 14, 1, 6, 1, 13, 1, 4, 1, 12, 1, 5, 1, 8, 1, 8, 1, 4, 1, 11, 1, 5, 0, 10, 1, 6, 1, 3, 1, 11, 11, 1, 6, 1, 6, 1, 12, 12, 11, 13, 14, 3, 1, 7, 1, 13, 1, 3, 1, 10, 4, 1, 5, 1, 6, 1, 13, 11, 13, 11, 1, 11, 4, 1, 8, 8, 1, 11, 8, 1, 14, 5, 1, 8, 9, 1, 11, 9, 1, 10, 9, 1, 12, 10, 13, 1, 1, 9, 1, 15, 1, 5, 7, 7, 7, 5, 1, 1, 12, 1, 8, 12, 13, 1, 9, 1, 2, 1, 6, 12, 1, 1, 4, 1, 11, 12, 14, 12, 11, 13, 10, 1)
+
+scala> readme.map(line => line.split(" ").size).reduce((a,b) => if (a>b) a else b)
+res24: Int = 15
+
+=> The line that has the most words has 15 words
+
+This first maps a line to an integer value, creating a new RDD. reduce is called on that RDD to find the largest line count. The arguments to mapand reduce are Scala function literals (closures), and can use any language feature or Scala/Java library. For example, we can easily call functions declared elsewhere. We’ll use Math.max() function to make this code easier to understand:
+
+Another way to do this is using the Math library
+scala> import java.lang.Math
+import java.lang.Math
+
+scala> readme.map(line => line.split(" ").size).reduce((a,b) => Math.max(a,b))
+res25: Int = 15
+
+One common data flow pattern is MapReduce, as popularized by Hadoop. Spark can implement MapReduce flows easily.
+We will use redyceByKey
+reduceByKey(func,[numTasks]) 
+Purpose: To aggregate values of a key using a function. “numTasks” is an optional parameter to specify number of reduce tasks
+scala> val word1=fm.map(word=>(word,1)) scala> val wrdCnt=word1.reduceByKey(_+_) 
+scala> wrdCnt.collect() 
+Result:
+Array[(String, Int)] = Array((is,2), (It,1), (awesome,1), (Spark,1), (fun,1))
+
+scala> val wordCount = readme.flatMap(line => line.split(" ")).map(word => (word,1)).collect()
+wordCount: Array[(String, Int)] = Array((#,1), (Apache,1), (Spark,1), ("",1), (Spark,1), (is,1), (a,1), (fast,1), (and,1), (general,1), (cluster,1), (computing,1), (system,1), (for,1), (Big,1), (Data.,1), (It,1), (provides,1), (high-level,1), (APIs,1), (in,1), (Scala,,1), (Java,,1), (and,1), (Python,,1), (and,1), (an,1), (optimized,1), (engine,1), (that,1), (supports,1), (general,1), (computation,1), (graphs,1), (for,1), (data,1), (analysis.,1), (It,1), (also,1), (supports,1), (a,1), (rich,1), (set,1), (of,1), (higher-level,1), (tools,1), (including,1), (Spark,1), (SQL,1), (for,1), (SQL,1), (and,1), (structured,1), (data,1), (processing,,1), (MLLib,1), (for,1), (machine,1), (learning,,1), (GraphX,1), (for,1), (graph,1), (processing,,1), (and,1), (Spark,1), (Streaming.,1), ("",1), (<http...
+
+scala> val wordCount = readme.flatMap(line => line.split(" ")).map(word => (word,1)).reduceByKey((a,b) => a+b)
+wordCount: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[29] at reduceByKey at <console>:26
+
+scala> val wordCount = readme.flatMap(line => line.split(" ")).map(word => (word,1)).reduceByKey((a,b) => a+b).collect()
+wordCount: Array[(String, Int)] = Array((means,1), (under,2), (this,4), (Because,1), (Python,2), (agree,1), (cluster.,1), (its,1), (follows.,1), (general,2), (have,2), (YARN,,3), (pre-built,1), (locally,2), (changed,1), (locally.,1), (sc.parallelize(1,1), (only,1), (several,1), (This,2), (basic,1), (first,1), (learning,,1), (MRv1,,1), (Configuration,1), (MapReduce,2), (CLI,1), (graph,1), (requests,1), (without,1), (documentation,1), ("yarn-client",1), ([params]`.,1), (any,2), (setting,2), (application,1), (prefer,1), (SparkPi,2), (<http://spark.apache.org/>,1), (engine,1), (version,3), (file,1), (documentation,,1), (MASTER,1), (entry,1), (example,3), (are,2), (systems.,1), (params,1), (scala>,1), (provides,1), (refer,1), (MLLib,1), (Interactive,2), (artifact,1), (configure,1), (can,8), ...
+
+
+
+Other exercise with LogFile
+scala> val logFile = sc.textFile("/Users/Fab/Downloads/apache_sample.log")
+logFile: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[36] at textFile at <console>:24
+
+Remove lines that contain “info”
+scala> val info = logFile.filter(line => line.contains("info"))
+info: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[37] at filter at <console>:26
+
+scala> info.count()
+res27: Long = 62
+
+scala> val info = logFile.filter(line => line.contains("info")).collect()
+info: Array[String] = Array([Sun Mar 7 16:02:00 2004] [info] Server built: Feb 27 2004 13:56:37, [Sun Mar 7 16:05:49 2004] [info] [client 64.242.88.10] (104)Connection reset by peer: client stopped connection before send body completed, [Sun Mar 7 16:45:56 2004] [info] [client 64.242.88.10] (104)Connection reset by peer: client stopped connection before send body completed, [Sun Mar 7 17:13:50 2004] [info] [client 64.242.88.10] (104)Connection reset by peer: client stopped connection before send body completed, [Sun Mar 7 17:21:44 2004] [info] [client 64.242.88.10] (104)Connection reset by peer: client stopped connection before send body completed, [Sun Mar 7 17:27:37 2004] [info] [client 64.242.88.10] (104)Connection reset by peer: client stopped connection before send body completed, ...
+scala> val info = logFile.filter(line => line.contains("info"))
+info: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[40] at filter at <console>:26
+
+Count how many tmes was there a client stopped connection
+scala> info.filter(line => line.contains("client stopped connection")).count()
+res28: Long = 61
+
+
+Joining RDDs:
+Creating 2 RDDs from 2 files:
+scala> val readmeFile = sc.textFile("/Users/Fab/Downloads/labfiles/README.md")
+readmeFile: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[44] at textFile at <console>:24
+
+scala> val changesFile = sc.textFile("/Users/Fab/Downloads/labfiles/CHANGES.txt")
+changesFile: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[46] at textFile at <console>:24
+
+How many Spark keywords are in each file?
+scala> readmeFile.filter(line => line.contains("Spark")).count()
+res0: Long = 21
+
+scala> changesFile.filter(line => line.contains("Spark")).count()
+res2: Long = 381
+
+Now do a WordCount on each RDD so that the results are (K,V) pairs or (word,count)
+scala> val readmeCount = readmeFile.flatMap(line => line.split(" ")).map(word => (word,1)).reduceByKey(_ + _)
+readmeCount: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[8] at reduceByKey at <console>:23
+
+scala> val changesCount = changesFile.flatMap(line => line.split(" ")).map(word => (word,1)).reduceByKey(_ + _)
+changesCount: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[11] at reduceByKey at <console>:23
+
+scala> readmeCount.collect()
+res3: Array[(String, Int)] = Array((means,1), (under,2), (this,4), (Because,1), (Python,2), (agree,1), (cluster.,1), (its,1), (follows.,1), (general,2), (have,2), (YARN,,3), (pre-built,1), (locally,2), (changed,1), (locally.,1), (sc.parallelize(1,1), (only,1), (several,1), (This,2), (basic,1), (first,1), (learning,,1), (MRv1,,1), (Configuration,1), (MapReduce,2), (CLI,1), (graph,1), (requests,1), (without,1), (documentation,1), ("yarn-client",1), ([params]`.,1), (any,2), (setting,2), (application,1), (prefer,1), (SparkPi,2), (<http://spark.apache.org/>,1), (engine,1), (version,3), (file,1), (documentation,,1), (MASTER,1), (entry,1), (example,3), (are,2), (systems.,1), (params,1), (scala>,1), (provides,1), (refer,1), (MLLib,1), (Interactive,2), (artifact,1), (configure,1), (can,8), (<art...
+scala> changesCount.collect()
+res4: Array[(String, Int)] = Array((13:28:57,1), (github.com/apache/spark/pull/440,2), (66b4c81,,1), (148af60,,1), (SPARK-1416:,1), (Saurabh,2), (17:03:54,2), (12:20:49,1), (Ameet,1), (<aaron@magnify.io>,,1), (components.,2), (2014-04-07,13), (SPARK-1757,2), (32KB.,1), (14:59:58,2), (RDD[String]),1), (been,2), (#524,3), (15:56:29,1), (github.com/apache/spark/pull/1450,1), (14:45:44,1), (20:43:56,2), (Lian,60), (accross,1), (981bde9,,1), (clients,1), (fdae095,,1), (github.com/apache/spark/pull/1562,1), (f66f260,,1), (SPARK-2882:,1), (13:50:50,1), (14:04:45,1), (11:13:33,1), (DDL,1), (18:03:20,1), (22:22:20,1), (#603,1), (ignore,3), ([SPARK-2190][SQL],1), (68ad33a,1), (7120a29,,1), (2.,2), (github.com/apache/spark/pull/1623,1), ([WIP],8), (github.com/apache/spark/pull/390,2), ([Formatting...
+
+Now let’s join these RDDs to comine (K,V) and (K,W) in (K,(V,W))
+scala> val joined = readmeCount.join(changesCount)
+joined: org.apache.spark.rdd.RDD[(String, (Int, Int))] = MapPartitionsRDD[14] at join at <console>:29
+
+scala> joined.cache()
+res5: joined.type = MapPartitionsRDD[14] at join at <console>:29
+
+scala> joined.collect.foreach(println)
+(CLI,(1,4))
+(MASTER,(1,5))
+(several,(1,6))
+(Apache,(6,3))
+(data,(2,40))
+(via,(2,7))
+(how,(1,5))
+(other,(4,15))
+(under,(2,6))
+...
+
+Let’s combine these values together to get the total count: (K,V) and (KW) = (K, V+W)
+scala> val joinedSum = joined.map(k => (k._1, (k._2)._1 + (k._2)._2))
+joinedSum: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[15] at map at <console>:31
+
+scala> joinedSum.collect()
+res7: Array[(String, Int)] = Array((CLI,5), (MASTER,6), (several,7), (Apache,9), (data,42), (via,9), (how,6), (other,19), (under,8), (build,65), (as,58), (built,9), (Shell,3), (with,153), (submitting,3), (Configuration,3), (general,3), (example,28), (start,10), (only,19), (submit,7), (their,3), (When,4), (one,13), (using,37), (variable,11), (return,16), (requires,4), (when,141), (need,5), (locally,4), (can,22), (change,15), (version,62), (please,2), (package.,2), (YARN,,10), (entry,3), (are,29), (README,8), (from,995), (graph,12), (set,39), (Big,2), (Scala,35), (will,4), (information,12), (assembly,19), (class,20), (requests,5), (GraphX,13), (sample,6), (file,39), (SQL,32), (its,4), (is,108), (uses,2), (guide,,2), (any,3), (refer,4), (first,2), (have,15), (computing,3), (basic,2), (Exam...
+
+
+To check if this is correct, print the first five elements from the joined and the joinedSum RDDs:
+scala> joined.take(5).foreach(println)
+(CLI,(1,4))
+(MASTER,(1,5))
+(several,(1,6))
+(Apache,(6,3))
+(data,(2,40))
+
+scala> joinedSum.take(5).foreach(println)
+(CLI,5)
+(MASTER,6)
+(several,7)
+(Apache,9)
+(data,42)
+
+
+Shared variables:
+Broadcast variables are useful for when you have a large dataset that you want to use across all the worker nodes. Instead of having to send out the entire dataset, only the variable is sent out.
+
+scala> val broadcastVar = sc.broadcast(Array(1,2,3))
+broadcastVar: org.apache.spark.broadcast.Broadcast[Array[Int]] = Broadcast(12)
+
+scala> broadcastVar.value
+res10: Array[Int] = Array(1, 2, 3)
+
+Accumulators:
+Accumulators are variables that can only be added through an associative operation. It is used to implement counters and sum efficiently in parallel. Spark natively supports numeric type accumulators and standard mutable collections. Programmers can extend these for new types. Only the driver can read the values of the accumulators. The workers can only invoke it to increment the value. 
+scala> val accum = sc.accumulator(0)
+accum: org.apache.spark.Accumulator[Int] = 0
+
+scala> sc.parallelize(Array(1,2,3,4)).foreach(x => accum += x)
+
+scala> accum.value
+res12: Int = 10
+
+
+Key-value pairs:
+scala> val pair = ('a', 'b')
+pair: (Char, Char) = (a,b)
+
+scala> pair._1
+res13: Char = a
+
+scala> pair._2
+res14: Char = b
+
+
+
+NYC TAXI Exercise
+File: “nyctaxi.csv”
+"_id","_rev","dropoff_datetime","dropoff_latitude","dropoff_longitude","hack_license","medallion","passenger_count","pickup_datetime","pickup_latitude","pickup_longitude","rate_code","store_and_fwd_flag","trip_distance","trip_time_in_secs","vendor_id"
+"29b3f4a30dea6688d4c289c9672cb996","1-ddfdec8050c7ef4dc694eeeda6c4625e","2013-01-11 22:03:00",+4.07033460000000E+001,-7.40144200000000E+001,"A93D1F7F8998FFB75EEF477EB6077516","68BC16A99E915E44ADA7E639B4DD5F59",2,"2013-01-11 21:48:00",+4.06760670000000E+001,-7.39810790000000E+001,1,,+4.08000000000000E+000,900,"VTS"
+"2a80cfaa425dcec0861e02ae44354500","1-b72234b58a7b0018a1ec5d2ea0797e32","2013-01-11 04:28:00",+4.08190960000000E+001,-7.39467470000000E+001,"64CE1B03FDE343BB8DFB512123A525A4","60150AA39B2F654ED6F0C3AF8174A48A",1,"2013-01-11 04:07:00",+4.07280540000000E+001,-7.40020370000000E+001,1,,+8.53000000000000E+000,1260,"VTS"
+"29b3f4a30dea6688d4c289c96758d87e","1-387ec30eac5abda89d2abefdf947b2c1","2013-01-11 22:02:00",+4.07277180000000E+001,-7.39942860000000E+001,"2D73B0C44F1699C67AB8AE322433BDB7","6F907BC9A85B7034C8418A24A0A75489",5,"2013-01-11 21:46:00",+4.07577480000000E+001,-7.39649810000000E+001,1,,+3.01000000000000E+000,960,"VTS"
+
+
+
+scala> val taxi = sc.textFile("/Users/Fab/Downloads/labfiles/nyctaxi/nyctaxi.csv")
+taxi: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[18] at textFile at <console>:21
+
+scala> taxi.take(5).foreach(println)
+"_id","_rev","dropoff_datetime","dropoff_latitude","dropoff_longitude","hack_license","medallion","passenger_count","pickup_datetime","pickup_latitude","pickup_longitude","rate_code","store_and_fwd_flag","trip_distance","trip_time_in_secs","vendor_id"
+"29b3f4a30dea6688d4c289c9672cb996","1-ddfdec8050c7ef4dc694eeeda6c4625e","2013-01-11 22:03:00",+4.07033460000000E+001,-7.40144200000000E+001,"A93D1F7F8998FFB75EEF477EB6077516","68BC16A99E915E44ADA7E639B4DD5F59",2,"2013-01-11 21:48:00",+4.06760670000000E+001,-7.39810790000000E+001,1,,+4.08000000000000E+000,900,"VTS"
+"2a80cfaa425dcec0861e02ae44354500","1-b72234b58a7b0018a1ec5d2ea0797e32","2013-01-11 04:28:00",+4.08190960000000E+001,-7.39467470000000E+001,"64CE1B03FDE343BB8DFB512123A525A4","60150AA39B2F654ED6F0C3AF8174A48A",1,"2013-01-11 04:07:00",+4.07280540000000E+001,-7.40020370000000E+001,1,,+8.53000000000000E+000,1260,"VTS"
+"29b3f4a30dea6688d4c289c96758d87e","1-387ec30eac5abda89d2abefdf947b2c1","2013-01-11 22:02:00",+4.07277180000000E+001,-7.39942860000000E+001,"2D73B0C44F1699C67AB8AE322433BDB7","6F907BC9A85B7034C8418A24A0A75489",5,"2013-01-11 21:46:00",+4.07577480000000E+001,-7.39649810000000E+001,1,,+3.01000000000000E+000,960,"VTS"
+"2a80cfaa425dcec0861e02ae446226e4","1-aa8b16d6ae44ad906a46cc6581ffea50","2013-01-11 10:03:00",+4.07643050000000E+001,-7.39544600000000E+001,"E90018250F0A009433F03BD1E4A4CE53","1AFFD48CC07161DA651625B562FE4D06",5,"2013-01-11 09:44:00",+4.07308080000000E+001,-7.39928280000000E+001,1,,+3.64000000000000E+000,1140,"VTS"
+
+
+To parse out the values, including the medallion numbers, you need to first create a new RDD by splitting the lines of the RDD using the comma as the delimiter. 
+
+scala> val taxiParse = taxi.map(line=>line.split(","))
+taxiParse: org.apache.spark.rdd.RDD[Array[String]] = MapPartitionsRDD[2] at map at <console>:23
+
+Now create the key-value pairs where the key is the medallion number and the value is 1. We use this model to later sum up all the keys to find out the number of trips a particular taxi took and in particular, will be able to see which taxi took the most trips. Map each of the medallions to the value of one. Type in: 
+
+scala> val taxiMedKey = taxiParse.map(vals=>(vals(6), 1))
+taxiMedKey: org.apache.spark.rdd.RDD[(String, Int)] = MapPartitionsRDD[3] at map at <console>:25
+
+vals(6) corresponds to the column where the medallion key is located 
+
+Next use the reduceByKey function to count the number of occurrence for each key. 
+scala> val taxiMedCounts = taxiMedKey.reduceByKey((v1,v2)=>v1+v2)
+taxiMedCounts: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[4] at reduceByKey at <console>:27
+
+scala> taxiMedCounts.take(5)
+res2: Array[(String, Int)] = Array(("A9907052C8BBDED5079252EFE6177ECF",195), ("26DE3DC2FCBB37A233BE231BA6F7364E",173), ("BA60553FAA4FE1A36BBF77B4C10D3003",171), ("67DD83EA2A67933B2724269121BF45BB",196), ("AD57F6329C387766186E1B3838A9CEDD",214))
+
+scala> for (pair <-taxiMedCounts.map(_.swap).top(10)) println("Taxi Medallion %s had %s Trips".format(pair._2, pair._1))
+Taxi Medallion "FE4C521F3C1AC6F2598DEF00DDD43029" had 415 Trips
+Taxi Medallion "F5BB809E7858A669C9A1E8A12A3CCF81" had 411 Trips
+Taxi Medallion "8CE240F0796D072D5DCFE06A364FB5A0" had 406 Trips
+Taxi Medallion "0310297769C8B049C0EA8E87C697F755" had 402 Trips
+Taxi Medallion "B6585890F68EE02702F32DECDEABC2A8" had 399 Trips
+Taxi Medallion "33955A2FCAF62C6E91A11AE97D96C99A" had 395 Trips
+Taxi Medallion "4F7C132D3130970CFA892CC858F5ECB5" had 391 Trips
+Taxi Medallion "78833E177D45E4BC520222FFBBAC5B77" had 383 Trips
+Taxi Medallion "E097412FE23295A691BEEE56F28FB9E2" had 380 Trips
+Taxi Medallion "C14289566BAAD9AEDD0751E5E9C73FBD" had 377 Trips
+
+
+
+To note we can do everything in 1 line:
+scala> val taxiMedCountsOneLine = taxi.map(line=>line.split(',')).map(vals=>(vals(6),1)).reduceByKey(_ + _)
+taxiMedCountsOneLine: org.apache.spark.rdd.RDD[(String, Int)] = ShuffledRDD[11] at reduceByKey at <console>:23
+
+scala> for (pair <-taxiMedCountsOneLine.map(_.swap).top(10)) println("Taxi Medallion %s had %s Trips".format(pair._2, pair._1))
+Taxi Medallion "FE4C521F3C1AC6F2598DEF00DDD43029" had 415 Trips
+Taxi Medallion "F5BB809E7858A669C9A1E8A12A3CCF81" had 411 Trips
+Taxi Medallion "8CE240F0796D072D5DCFE06A364FB5A0" had 406 Trips
+Taxi Medallion "0310297769C8B049C0EA8E87C697F755" had 402 Trips
+Taxi Medallion "B6585890F68EE02702F32DECDEABC2A8" had 399 Trips
+Taxi Medallion "33955A2FCAF62C6E91A11AE97D96C99A" had 395 Trips
+Taxi Medallion "4F7C132D3130970CFA892CC858F5ECB5" had 391 Trips
+Taxi Medallion "78833E177D45E4BC520222FFBBAC5B77" had 383 Trips
+Taxi Medallion "E097412FE23295A691BEEE56F28FB9E2" had 380 Trips
+Taxi Medallion "C14289566BAAD9AEDD0751E5E9C73FBD" had 377 Trips
+
+
+Let's cache the taxiMedCountsOneLine to see the difference caching makes. Run it with the logs set to INFO and you can see the output of the time it takes to execute each line. First, let's cache the RDD
+
+
+
+
+
+Building a Spark app
+Install Build tool
+> brew install sbt
+> mkdir SparkPi
+Under the SparkPi directory, set up the typical directory structure for your application. Once that is in place and you have your application code written, you can package it up into a JAR using sbt and run it using spark-submit. 
+
+> cd SparkPi
+> mkdir -p src src/main src/main/scala
+> cd mkdir src/main/scala
+
+> cat > SparkPi.scala
+/** Import the spark and math packages */
+import scala.math.random
+import org.apache.spark._
+/** Computes an approximation to pi */
+object SparkPi {
+def main(args: Array[String]) {
+/** Create the SparkConf object */
+val conf = new SparkConf().setAppName("Spark Pi")
+/** Create the SparkContext */
+val spark = new SparkContext(conf)
+/** business logic to calculate Pi */
+val slices = if (args.length > 0) args(0).toInt else 2
+val n = math.min(100000L * slices, Int.MaxValue).toInt // avoid overflow
+val count = spark.parallelize(1 until n, slices).map { i =>
+val x = random * 2 - 1
+val y = random * 2 - 1
+if (x*x + y*y < 1) 1 else 0
+}.reduce(_ + _)
+/** Printing the value of Pi */
+println("Pi is roughly " + 4.0 * count / n)
+/** Stop the SparkContext */
+spark.stop()
+}
+}
+
+CTRL+D
+
+Fab@MacBookAir-Fab:~/SparkPi$ find .
+.
+./src
+./src/main
+./src/main/scala
+./src/main/scala/SparkPi.scala
+
+
+__10. Remember, you can have any business logic you need for your application in your scala class. This is just a sample class. Let's spend a few moments analyzing the content of SparkPi.scala. Type in the following to view the content: 
+more SparkPi.scala 
+__11. The next two lines are the required packages for this application. 
+
+import scala.math.random 
+import org.apache.spark._ 
+__12. Next you create the SparkConf object to define the application's name. 
+
+val conf = new SparkConf().setAppName("Spark Pi") 
+__13. Create the SparkContext: 
+
+val spark = new SparkContext(conf) 
+__14. The rest that follows is the business logic required to calculate the value of Pi. 
+
+val slices = if (args.length > 0) args(0).toInt else 2 
+val n = math.min(100000L * slices, Int.MaxValue).toInt // avoid overflow 
+__15. Create an RDD by using transformations and actions: 
+
+val count = spark.parallelize(1 until n, slices).map { i => 
+val x = random * 2 - 
+
+Fab@MacBookAir-Fab:~/SparkPi$ cat > sparkpi.sbt
+name := "SparkPi Project"
+version := "1.0"
+scalaVersion := "2.10.4"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "1.2.1"
+Fab@MacBookAir-Fab:~/SparkPi$ ls
+sparkpi.sbt src
+
+
+Fab@MacBookAir-Fab:~/SparkPi$ sbt package
+Getting org.scala-sbt sbt 0.13.9 ...
+downloading https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/sbt/0.13.9/jars/sbt.jar ...
+	[SUCCESSFUL ] org.scala-sbt#sbt;0.13.9!sbt.jar (674ms)
+downloading https://jcenter.bintray.com/org/scala-lang/scala-library/2.10.5/scala-library-2.10.5.jar ...
+	[SUCCESSFUL ] org.scala-lang#scala-library;2.10.5!scala-library.jar (3188ms)
+downloading https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/main/0.13.9/jars/main.jar ...
+	[SUCCESSFUL ] org.scala-sbt#main;0.13.9!main.jar (1512ms)
+downloading https://repo.typesafe.com/typesafe/ivy-releases/org.scala-sbt/compiler-interface/0.13.9/jars/compiler-interface-src.jar ...
+	[SUCCESSFUL ] org.scala-sbt#compiler-interface;0.13.9!compiler-interface-src.jar (693ms)
+...
+It will take a long time to create the package initially because of all the dependencies. Step out for a cup of coffee or tea or grab a snack. 
+Use spark-submit to run the application. 
+
+Use spark-submit to run the application. 
+> $SPARK_HOME/bin/spark-submit > --class "SparkPi" > --master local[4] > target/scala-2.10/sparkpi-project_2.10-1.0.jar
+
+
+Lab Exercises #4 (Libraries)
+Also look at: http://spark.apache.org/docs/1.0.0/sql-programming-guide.html 
+This lab exercise will show you how to create various applications using the Spark libraries. The advantage of these libraries is that they are tightly integrated with Spark, with very little overhead. Any time the Spark core API is updated, the new features and performance enhancements are passed down to these libraries as well. In this lab exercise, you will work with these various libraries to use Spark for specialized use cases. 
+
+Creating a Spark application using SparkSQL
+~/Downloads/labfiles/nycweathe
+> more nycweather.csv
+There are 3 columns in this dataset:
+ - date
+ - mean temperature
+ - precipitation
+Since we already know the schema, we will infer the schema using reflection
+
+Launch Scala Shell:
+> $SPARK_HOME/bin/spark-shell
+
+Define the SparkSQL context:
+scala> val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+sqlContext: org.apache.spark.sql.SQLContext = org.apache.spark.sql.SQLContext@599ebf6c
+
+Import library so we can use the SchemaRDD
+scala> import sqlContext.implicits._
+import sqlContext.implicits._
+
+Create a case class in Scala that defines the schema of the table
+scala> case class Weather(date: String, temp: Int, precipitation: Double)
+defined class Weather
+
+Create RDD of the weather object
+scala> val weather = sc.textFile("/Users/Fab/Downloads/labfiles/nycweather/nycweather.csv").map(_.split(",")).map(w => Weather(w(0), w(1).trim.toInt, w(2).trim.toDouble))
+weather: org.apache.spark.rdd.RDD[Weather] = MapPartitionsRDD[3] at map at <console>:28
+
+Now register the RDD as a table
+scala> weather.toDF.registerTempTable("weather")
+
+Now run queries against this RDD
+For example, get the list of hottest dates with some precipitations:
+scala> val hottest_with_precip = sqlContext.sql("SELECT * FROM weather WHERE precipitation > 0.0 ORDER BY temp DESC")
+hottest_with_precip: org.apache.spark.sql.DataFrame = [date: string, temp: int, precipitation: double]
+
+Print them:
+scala> hottest_with_precip.map(x => ("Date: " + x(0), "Temp : " + x(1), "Precip: " + x(2))).top(10).foreach(println)
+(Date: "2013-12-21",Temp : 14,Precip: 0.25)
+(Date: "2013-12-17",Temp : -2,Precip: 4.83)
+(Date: "2013-12-15",Temp : 2,Precip: 18.29)
+(Date: "2013-12-14",Temp : -2,Precip: 18.54)
+(Date: "2013-12-10",Temp : 1,Precip: 5.84)
+(Date: "2013-12-09",Temp : 2,Precip: 7.62)
+(Date: "2013-12-08",Temp : -1,Precip: 2.03)
+(Date: "2013-12-07",Temp : 3,Precip: 3.56)
+(Date: "2013-12-06",Temp : 10,Precip: 18.54)
+(Date: "2013-12-05",Temp : 12,Precip: 0.25)
+
+
+
+Creating a Spark application using MLib
+
+Will acquire the K-means clustering for drop-offs latitudes and longitudes of taxis for 3 clusters.
+
+Import K-means algorithm and Vector packages:
+scala> import org.apache.spark.mllib.clustering.KMeans
+import org.apache.spark.mllib.clustering.KMeans
+
+scala> import org.apache.spark.mllib.linalg.Vectors
+import org.apache.spark.mllib.linalg.Vectors
+
+Create and RDD from the CSV NYX Taxi csv file
+scala> val taxiFile = sc.textFile("/Users/Fab/Downloads/labfiles/nyctaxisub/nyctaxisub.csv")
+taxiFile: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[20] at textFile at <console>:31
+
+scala> taxiFile.count()
+res9: Long = 250000
+
+Clean the data
+First filter limits the rows to those that occured in the year 2013
+This will also remove any header in the file
+The 2rd and 4th columns contain the drop off latitude and longitude. The transformation will throw exceptions if these values are empty
+scala> val taxiData=taxiFile.filter(_.contains("2013")).filter(_.split(",")(3)!="").filter(_.split(",")(4)!="")
+taxiData: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[23] at filter at <console>:33
+
+Fence area roughly to New York City
+scala> val taxiFence=taxiData.filter(_.split(",")(3).toDouble>40.70).
+     | filter(_.split(",")(3).toDouble<40.86).
+     | filter(_.split(",")(4).toDouble>(-74.02)).
+     | filter(_.split(",")(4).toDouble<(-73.93))
+taxiFence: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[27] at filter at <console>:38
+
+Create Vectors with the latitude and longitudes that will be used as input to the K-Means algorithm
+scala> val taxi=taxiFence.map{line=>Vectors.dense(line.split(',').slice(3,5).map(_.toDouble))}
+taxi: org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector] = MapPartitionsRDD[28] at map at <console>:37
+
+Run the K-Means algorithm
+scala> val iterationCount=10
+iterationCount: Int = 10
+
+scala> val clusterCount=3
+clusterCount: Int = 3
+
+scala> val model=KMeans.train(taxi,clusterCount,iterationCount)
+16/01/01 15:57:03 WARN KMeans: The input data is not directly cached, which may hurt performance if its parent RDDs are also uncached.
+16/01/01 15:57:08 WARN BLAS: Failed to load implementation from: com.github.fommil.netlib.NativeSystemBLAS
+16/01/01 15:57:08 WARN BLAS: Failed to load implementation from: com.github.fommil.netlib.NativeRefBLAS
+16/01/01 15:57:32 WARN KMeans: The input data was not directly cached, which may hurt performance if its parent RDDs are also uncached.
+model: org.apache.spark.mllib.clustering.KMeansModel = org.apache.spark.mllib.clustering.KMeansModel@14b15983
+
+scala> val clusterCenters=model.clusterCenters.map(_.toArray)
+clusterCenters: Array[Array[Double]] = Array(Array(40.756762473006404, -73.98107260610739), Array(40.78689567161349, -73.95722897662009), Array(40.72447963887222, -73.99591253581892))
+
+scala> val cost=model.computeCost(taxi)
+cost: Double = 63.23564498974032
+
+scala> clusterCenters.foreach(lines=>println(lines(0),lines(1)))
+(40.756762473006404,-73.98107260610739)
+(40.78689567161349,-73.95722897662009)
+(40.72447963887222,-73.99591253581892)
+
+Not surprisingly, the second point is between the Theater District and Grand Central. The third point is in The Village, NYU, Soho and Little Italy area. The first point is the Upper East Side, presumably where people are more likely to take cabs than subways. 
+
+
+
+Creating a Spark application using Spark Streaming
+
+This section focuses on Spark Streams, an easy to build, scalable, stateful (e.g. sliding windows) stream processing library.
+Streaming jobs are written the same way Spark batch jobs are coded and support Java, Scala and Python. 
+In this exercise, taxi trip data will be streamed using a socket connection and then analyzed to provide a summary of number of passengers 
+by taxi vendor. This will be implemented in the Spark shell using Scala.
+
+There are two files under /home/virtuser/labdata/streams. 
+The first one is the nyctaxi100.csv which will serve as the source of the stream. 
+The other file is a python file, taxistreams.py, which will feed the csv file through a socket connection to simulate a stream.
+
+Once started, the program will bind and listen to the localhost socket 7777. 
+When a connection is made, it will read ‘nyctaxi100.csv’ and send across the socket.
+ The sleep is set such that one line will be sent every 0.5 seconds, or 2 rows a second. 
+This was intentionally set to a high value to make it easier to view the data during execution.
+
+
+Fab@MacBookAir-Fab:~/PythonStreams$ pwd
+/Users/Fab/PythonStreams
+
+Fab@MacBookAir-Fab:~/PythonStreams$ ls -l
+total 72
+-rwxr-xr-x@ 1 Fab  staff  31798 Jan  1 16:12 nyctaxi100.csv
+-rwxr-xr-x@ 1 Fab  staff    299 Jan  1 16:12 taxistreams.py
+
+Fab@MacBookAir-Fab:~/PythonStreams$ more taxistreams.py
+import socket
+import time
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(("localhost",7777))
+s.listen(1)
+print "Started..."
+while(1):
+  c,address = s.accept()
+  for row in open("/Users/Fab/PythonStreams/nyctaxi100.csv"):
+    print row
+    c.send(row)
+    time.sleep(0.5)
+c.close()
+
+Start the python script
+Fab@MacBookAir-Fab:~/PythonStreams$ python taxistreams.py
+Started...
+
+In another terminal, run spark-shell and turn off logging so that we can see the output of the application
+scala> import org.apache.log4j.Logger
+import org.apache.log4j.Logger
+
+scala> import org.apache.log4j.Level
+import org.apache.log4j.Level
+
+scala> Logger.getLogger("org").setLevel(Level.OFF)
+
+scala> Logger.getLogger("akka").setLevel(Level.OFF)
+
+
+Import the required libraries
+scala> import org.apache.spark._
+import org.apache.spark._
+
+scala> import org.apache.spark.streaming._
+import org.apache.spark.streaming._
+
+scala> import org.apache.spark.streaming.StreamingContext._
+import org.apache.spark.streaming.StreamingContext._
+
+
+Create the StreamingContext by using the existing SparkContext(sc).
+It will be using a 1 second window, which means the stream is divided to 1 second batches and each batch becomes a RDD.
+scala> val ssc = new StreamingContext(sc,Seconds(1))
+ssc: org.apache.spark.streaming.StreamingContext = org.apache.spark.streaming.StreamingContext@1d55c796
+
+Create the socket stream that connects to the localhost socket 7777
+This matches the port that the Python script is listening. Each stream will be a lines RDD
+scala> val lines = ssc.socketTextStream("localhost",7777)
+lines: org.apache.spark.streaming.dstream.ReceiverInputDStream[String] = org.apache.spark.streaming.dstream.SocketInputDStream@48ac8c45
+
+Next, put in the business logic to split up the lines on each comma and mapping pass(15), which is the vendor, and pass(7), 
+which is the passenger count. 
+Then this is reduced by key resulting in a summary of number of passengers by vendor.
+scala> val pass = lines.map(_.split(",")).
+     | map(pass=>(pass(15),pass(7).toInt)).
+     | reduceByKey(_+_)
+pass: org.apache.spark.streaming.dstream.DStream[(String, Int)] = org.apache.spark.streaming.dstream.ShuffledDStream@320c2091
+
+
+scala> pass.print()
+
+Next 2 lines starts the stream
+scala> ssc.start()
+
+scala> ssc.awaitTermination()-------------------------------------------
+Time: 1451683270000 ms
+-------------------------------------------
+("VTS",2)
+
+-------------------------------------------
+Time: 1451683271000 ms
+-------------------------------------------
+("CMT",1)
+("VTS",5)
+
+-------------------------------------------
+Time: 1451683272000 ms
+-------------------------------------------
+("CMT",5)
+("VTS",1)
+....
+
+I other terminal
+2 rows per second of taxi trip data is receveid in a 1 second window
+In the Python terminal, the contents of the file are printed as they are streamed
+Fab@MacBookAir-Fab:~/PythonStreams$ python taxistreams.py
+Started...
+"29b3f4a30dea6688d4c289c9672cb996","1-ddfdec8050c7ef4dc694eeeda6c4625e","2013-01-11 22:03:00",+4.07033460000000E+001,-7.40144200000000E+001,"A93D1F7F8998FFB75EEF477EB6077516","68BC16A99E915E44ADA7E639B4DD5F59",2,"2013-01-11 21:48:00",+4.06760670000000E+001,-7.39810790000000E+001,1,,+4.08000000000000E+000,900,"VTS"
+
+"2a80cfaa425dcec0861e02ae44354500","1-b72234b58a7b0018a1ec5d2ea0797e32","2013-01-11 04:28:00",+4.08190960000000E+001,-7.39467470000000E+001,"64CE1B03FDE343BB8DFB512123A525A4","60150AA39B2F654ED6F0C3AF8174A48A",1,"2013-01-11 04:07:00",+4.07280540000000E+001,-7.40020370000000E+001,1,,+8.53000000000000E+000,1260,"CMT"
+
+"29b3f4a30dea6688d4c289c96758d87e","1-387ec30eac5abda89d2abefdf947b2c1","2013-01-11 22:02:00",+4.07277180000000E+001,-7.39942860000000E+001,"2D73B0C44F1699C67AB8AE322433BDB7","6F907BC9A85B7034C8418A24A0A75489",5,"2013-01-11 21:46:00",+4.07577480000000E+001,-7.39649810000000E+001,1,,+3.01000000000000E+000,960,"VTS"
+
+
+
+
+Creating a Spark application using GraphX
+Also look into:
+http://spark.apache.org/docs/1.0.0/graphx-programming-guide.html 
+
+Using 2 sample files:
+Fab@MacBookAir-Fab:~/Downloads/labfiles$ more followers.txt
+2 1
+4 1
+1 2
+6 3
+7 3
+7 6
+6 7
+3 7
+Fab@MacBookAir-Fab:~/Downloads/labfiles$ more users.txt
+1,BarackObama,Barack Obama
+2,ladygaga,Goddess of Love
+3,jeresig,John Resig
+4,justinbieber,Justin Bieber
+6,matei_zaharia,Matei Zaharia
+7,odersky,Martin Odersky
+8,anonsys
+
+Start spark shell
+> $SPARK_HOME/bin/spark-shell
+
+Import GraphX package
+scala> import org.apache.spark.graphx._
+import org.apache.spark.graphx._
+
+Create the users RDD and parse into tuples of iser id and attribute list
+scala> val users = (sc.textFile("/Users/Fab/Downloads/labfiles/users.txt").map(line =>line.split(",")).map(parts => (parts.head.toLong, parts.tail)))
+users: org.apache.spark.rdd.RDD[(Long, Array[String])] = MapPartitionsRDD[5] at map at <console>:24
+
+scala> users.collect()
+res0: Array[(Long, Array[String])] = Array((1,Array(BarackObama, Barack Obama)), (2,Array(ladygaga, Goddess of Love)), (3,Array(jeresig, John Resig)), (4,Array(justinbieber, Justin Bieber)), (6,Array(matei_zaharia, Matei Zaharia)), (7,Array(odersky, Martin Odersky)), (8,Array(anonsys)))
+
+Parse the edge data, which is already in userId->userId format
+scala> val followerGraph = GraphLoader.edgeListFile(sc, "/Users/Fab/Downloads/labfiles/followers.txt")
+followerGraph: org.apache.spark.graphx.Graph[Int,Int] = org.apache.spark.graphx.impl.GraphImpl@2f695384
+
+Attach the user attributes
+scala> val graph = followerGraph.outerJoinVertices(users) {
+     | case (uid, deg, Some(attrList)) => attrList
+     | case (uid, deg, None) => Array.empty[String]
+     | }
+graph: org.apache.spark.graphx.Graph[Array[String],Int] = org.apache.spark.graphx.impl.GraphImpl@567283de
+
+
+Restrict the graph to users with usernames and names:
+scala> val subgraph = graph.subgraph(vpred = (vid, attr) => attr.size == 2)
+subgraph: org.apache.spark.graphx.Graph[Array[String],Int] = org.apache.spark.graphx.impl.GraphImpl@70441c24
+
+Compute the PageRank
+scala> val pagerankGraph = subgraph.pageRank(0.001)
+pagerankGraph: org.apache.spark.graphx.Graph[Double,Double] = org.apache.spark.graphx.impl.GraphImpl@256121e1
+
+Get the attributes of the top pagerank users
+scala> val userInfoWithPageRank = subgraph.outerJoinVertices(pagerankGraph.vertices) {
+     | case (uid, attrList, Some(pr)) => (pr, attrList.toList)
+     | case (uid, attrList, None) => (0.0, attrList.toList)
+     | }
+userInfoWithPageRank: org.apache.spark.graphx.Graph[(Double, List[String]),Int] = org.apache.spark.graphx.impl.GraphImpl@6f222245
+
+Print the line out
+scala> println(userInfoWithPageRank.vertices.top(5)(Ordering.by(_._2._1)).mkString("\n"))
+(1,(1.453834747463902,List(BarackObama, Barack Obama)))
+(2,(1.3857595353443166,List(ladygaga, Goddess of Love)))
+(7,(1.2892158818481694,List(odersky, Martin Odersky)))
+(3,(0.9936187772892124,List(jeresig, John Resig)))
+(6,(0.697916749785472,List(matei_zaharia, Matei Zaharia)))
+
+
+
+
+Lab - configuring Spark applications
+Spark properties control most application settings and are configured separately for each application. These properties can be set directly on the SparkConf object and passed to your SparkContext. You can also set properties by providing it at runtime. For example, submitting a job using the spark-submit command and passing in arguments to that command. In this section, you will set some common properties. 
+
+> $ more $SPARK_HOME/conf/log4j.properties.template
+# Set everything to be logged to the console
+log4j.rootCategory=INFO, console
+log4j.appender.console=org.apache.log4j.ConsoleAppender
+log4j.appender.console.target=System.err
+log4j.appender.console.layout=org.apache.log4j.PatternLayout
+log4j.appender.console.layout.ConversionPattern=%d{yy/MM/dd HH:mm:ss} %p %c{1}: %m%n
+
+# Settings to quiet third party logs that are too verbose
+log4j.logger.org.spark-project.jetty=WARN
+log4j.logger.org.spark-project.jetty.util.component.AbstractLifeCycle=ERROR
+log4j.logger.org.apache.spark.repl.SparkIMain$exprTyper=INFO
+log4j.logger.org.apache.spark.repl.SparkILoop$SparkILoopInterpreter=INFO
+log4j.logger.org.apache.parquet=ERROR
+log4j.logger.parquet=ERROR
+
+# SPARK-9183: Settings to avoid annoying messages when looking up nonexistent UDFs in SparkSQL with Hive support
+log4j.logger.org.apache.hadoop.hive.metastore.RetryingHMSHandler=FATAL
+log4j.logger.org.apache.hadoop.hive.ql.exec.FunctionRegistry=ERROR
+
+
+Launch Spark shell with 2 cores
+> $SPARK_HOME/bin/spark-shell --master local[2]
+
+$ cat $SPARK_HOME/conf/spark-defaults.conf.template
+# Default system properties included when running spark-submit.
+# This is useful for setting default environmental settings.
+
+# Example:
+# spark.master                     spark://master:7077
+# spark.eventLog.enabled           true
+# spark.eventLog.dir               hdfs://namenode:8021/directory
+# spark.serializer                 org.apache.spark.serializer.KryoSerializer
+# spark.driver.memory              5g
+# spark.executor.extraJavaOptions  -XX:+PrintGCDetails -Dkey=value -Dnumbers="one two three"
+
+
+
+
