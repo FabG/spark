@@ -1,0 +1,299 @@
+1
+00:00:01,839 --> 00:00:07,870
+Passing functions to Spark. I wanted to touch
+a little bit on this before we move further.
+
+2
+00:00:07,870 --> 00:00:12,670
+This is important to understand as you begin
+to think about the business logic of your
+
+3
+00:00:12,670 --> 00:00:13,890
+application.
+
+4
+00:00:13,890 --> 00:00:18,340
+The design of Spark's API relies heavily on
+passing functions in the driver program to
+
+5
+00:00:18,340 --> 00:00:23,890
+run on the cluster. When a job is executed,
+the Spark driver needs to tell its worker
+
+6
+00:00:23,890 --> 00:00:27,109
+how to process the data.
+
+7
+00:00:27,109 --> 00:00:30,800
+There are three methods that you can use to
+pass functions.
+
+8
+00:00:30,800 --> 00:00:37,130
+The first method to do this is using an anonymous
+function syntax. You saw briefly what an anonymous
+
+9
+00:00:37,130 --> 00:00:44,130
+function is in the first lesson. This is useful
+for short pieces of code. For example, here
+
+10
+00:00:44,309 --> 00:00:50,079
+we define the anonymous function that takes
+in a particular parameter x of type Int and
+
+11
+00:00:50,079 --> 00:00:56,969
+add one to it. Essentially, anonymous functions
+are useful for one-time use of the function.
+
+12
+00:00:56,969 --> 00:01:00,960
+In other words, you don't need to explicitly
+define the function to use it. You define
+
+13
+00:01:00,960 --> 00:01:07,960
+it as you go. Again, the left side of the
+=> are the parameters or the arguments. The
+
+14
+00:01:08,060 --> 00:01:13,499
+right side of the => is the body of the function.
+
+15
+00:01:13,499 --> 00:01:18,689
+Another method to pass functions around Spark
+is to use static methods in a global singleton
+
+16
+00:01:18,689 --> 00:01:25,479
+object. This means that you can create a global
+object, in the example, it is the object MyFunctions.
+
+17
+00:01:25,479 --> 00:01:32,479
+Inside that object, you basically define the
+function func1. When the driver requires that
+
+18
+00:01:33,079 --> 00:01:38,499
+function, it only needs to send out the object
+-- the worker will be able to access it. In
+
+19
+00:01:38,499 --> 00:01:42,599
+this case, when the driver sends out the instructions
+to the worker, it just has to send out the
+
+20
+00:01:42,599 --> 00:01:46,200
+singleton object.
+
+21
+00:01:46,200 --> 00:01:51,509
+It is possible to pass reference to a method
+in a class instance, as opposed to a singleton
+
+22
+00:01:51,509 --> 00:01:57,609
+object. This would require sending the object
+that contains the class along with the method.
+
+23
+00:01:57,609 --> 00:02:03,450
+To avoid this consider copying it to a local
+variable within the function instead of accessing
+
+24
+00:02:03,450 --> 00:02:05,529
+it externally.
+
+25
+00:02:05,529 --> 00:02:11,140
+Example, say you have a field with the string
+Hello. You want to avoid calling that directly
+
+26
+00:02:11,140 --> 00:02:17,840
+inside a function as shown on the slide as
+x => field + x.
+
+27
+00:02:17,840 --> 00:02:23,030
+Instead, assign it to a local variable so
+that only the reference is passed along and
+
+28
+00:02:23,030 --> 00:02:30,030
+not the entire object shown val field_ = this.field.
+
+29
+00:02:31,110 --> 00:02:36,040
+For an example such as this, it may seem trivial,
+but imagine if the field object is not a simple
+
+30
+00:02:36,040 --> 00:02:42,989
+text Hello, but is something much larger,
+say a large log file. In that case, passing
+
+31
+00:02:42,989 --> 00:02:48,049
+by reference will have greater value by saving
+a lot of storage by not having to pass the
+
+32
+00:02:48,049 --> 00:02:53,000
+entire file.
+
+33
+00:02:53,000 --> 00:02:57,269
+Back to our regularly scheduled program.
+At this point, you should know how to link
+
+34
+00:02:57,269 --> 00:03:03,049
+dependencies with Spark and also know how
+to initialize the SparkContext. I also touched
+
+35
+00:03:03,049 --> 00:03:07,249
+a little bit on passing functions with Spark
+to give you a better view of how you can program
+
+36
+00:03:07,249 --> 00:03:12,040
+your business logic. This course will not
+focus too much on how to program business
+
+37
+00:03:12,040 --> 00:03:18,469
+logics, but there are examples available for
+you to see how it is done. The purpose is
+
+38
+00:03:18,469 --> 00:03:23,090
+to show you how you can create an application
+using a simple, but effective example which
+
+39
+00:03:23,090 --> 00:03:27,409
+demonstrates Spark's capabilities.
+
+40
+00:03:27,409 --> 00:03:32,180
+Once you have the beginning of your application
+ready by creating the SparkContext object,
+
+41
+00:03:32,180 --> 00:03:38,189
+you can start to program in the business logic
+using Spark's API available in Scala, Java,
+
+42
+00:03:38,189 --> 00:03:45,189
+or Python. You create the RDD from an external
+dataset or from an existing RDD. You use transformations
+
+43
+00:03:46,420 --> 00:03:52,719
+and actions to compute the business logic.
+You can take advantage of RDD persistence,
+
+44
+00:03:52,719 --> 00:03:59,409
+broadcast variables and/or accumulators to
+improve the performance of your jobs.
+
+45
+00:03:59,409 --> 00:04:05,889
+Here's a sample Scala application. You have
+your import statement. After the beginning
+
+46
+00:04:05,889 --> 00:04:11,109
+of the object, you see that the SparkConf
+is created with the application name. Then
+
+47
+00:04:11,109 --> 00:04:17,090
+a SparkContext is created. The several lines
+of code after is creating the RDD from a text
+
+48
+00:04:17,090 --> 00:04:22,530
+file and then performing the Hdfs test on
+it to see how long the iteration through the
+
+49
+00:04:22,530 --> 00:04:29,530
+file takes. Finally, at the end, you stop
+the SparkContext by calling the stop() function.
+
+50
+00:04:30,830 --> 00:04:35,690
+Again, just a simple example to show how you
+would create a Spark application. You will
+
+51
+00:04:35,690 --> 00:04:39,930
+get to practice this in the lab exercise.
+
+52
+00:04:39,930 --> 00:04:46,930
+I mentioned that there are examples available
+which shows the various usage of Spark. Depending
+
+53
+00:04:47,220 --> 00:04:51,639
+on your programming language preference, there
+are examples in all three languages that work
+
+54
+00:04:51,639 --> 00:04:56,900
+with Spark. You can view the source code of
+the examples on the Spark website or within
+
+55
+00:04:56,900 --> 00:05:01,919
+the Spark distribution itself. I provided
+some screenshots here to show you some of
+
+56
+00:05:01,919 --> 00:05:05,120
+the examples available.
+
+57
+00:05:05,120 --> 00:05:11,280
+On the slide, I also listed the step to run
+these examples. To run Scala or Java examples,
+
+58
+00:05:11,280 --> 00:05:18,280
+you would execute the run-example script under
+the Spark's home/bin directory. So for example,
+
+59
+00:05:18,699 --> 00:05:25,699
+to run the SparkPi application, execute run-example
+SparkPi, where SparkPi would be the name of
+
+60
+00:05:26,050 --> 00:05:33,050
+the application. Substitute that with a different
+application name to run that other application.
+
+61
+00:05:33,770 --> 00:05:39,319
+To run the sample Python applications, use
+the spark-submit command and provide the path
+
+62
+00:05:39,319 --> 00:05:40,119
+to the application.
+

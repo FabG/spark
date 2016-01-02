@@ -1,0 +1,316 @@
+1
+00:00:00,780 --> 00:00:03,610
+Welcome to the last lab exercise of this Spark course.
+
+2
+00:00:03,610 --> 00:00:06,870
+This is actually going to be a short exercise to
+
+3
+00:00:06,870 --> 00:00:10,750
+have you be able to configure and
+monitor Spark applications.
+
+4
+00:00:10,750 --> 00:00:14,900
+So this will start you off to let you know
+where and how you can configure and
+
+5
+00:00:14,900 --> 00:00:15,349
+monitor
+
+6
+00:00:15,349 --> 00:00:19,330
+Spark. So configuring Spark applications,
+
+7
+00:00:19,330 --> 00:00:23,490
+Spark properties control most
+application settings and are configure
+
+8
+00:00:23,490 --> 00:00:24,539
+separately for each
+
+9
+00:00:24,539 --> 00:00:28,960
+application. These properties can be set
+directly on the Spark configuration
+
+10
+00:00:28,960 --> 00:00:29,519
+object
+
+11
+00:00:29,519 --> 00:00:33,469
+and pass to your Spark Context. So you have seen this done in the Spark
+
+12
+00:00:33,469 --> 00:00:34,260
+applications.
+
+13
+00:00:34,260 --> 00:00:37,870
+You set up the SparkConf and you pass the
+
+14
+00:00:37,870 --> 00:00:42,450
+variable over to the Spark Context. You can also set properties during the run
+
+15
+00:00:42,450 --> 00:00:43,000
+time
+
+16
+00:00:43,000 --> 00:00:46,649
+and that done by providing into the
+spark-submit
+
+17
+00:00:46,649 --> 00:00:50,809
+script. You've also seen how to do this
+in a previous lab exercise.
+
+18
+00:00:50,809 --> 00:00:55,239
+In this section, we're going to take a look at some common
+
+19
+00:00:55,239 --> 00:00:59,340
+Spark properties that are the defaults. This is here inside the
+
+20
+00:00:59,340 --> 00:01:04,989
+Spark-default properties and this one
+actually has the lowest precedence.
+
+21
+00:01:04,989 --> 00:01:08,220
+So properties sent directly on the
+SparkConf or
+
+22
+00:01:08,220 --> 00:01:12,130
+the Spark configuration object takes
+priority number one
+
+23
+00:01:12,130 --> 00:01:15,700
+and any flags passed in the spark-submit script
+
+24
+00:01:15,700 --> 00:01:19,409
+is priority number two and finally
+you don't have anything set this is where all
+
+25
+00:01:19,409 --> 00:01:20,060
+the defaults
+
+26
+00:01:20,060 --> 00:01:24,720
+are located. So you can modify this under
+the spark-defaults.conf
+
+27
+00:01:24,720 --> 00:01:27,860
+located under
+
+28
+00:01:27,860 --> 00:01:30,860
+the spark configuration directory.
+
+29
+00:01:30,860 --> 00:01:35,150
+So this is just show you
+
+30
+00:01:35,150 --> 00:01:38,340
+quickly how you can set different
+configurations based on what you need to
+
+31
+00:01:38,340 --> 00:01:38,729
+do
+
+32
+00:01:38,729 --> 00:01:42,670
+Now I'm going to show you how to monitor Spark
+
+33
+00:01:42,670 --> 00:01:46,000
+applications via the Ambari console. 
+
+34
+00:01:46,000 --> 00:01:49,570
+Just log in to localhost on 8080 and the
+
+35
+00:01:49,570 --> 00:01:53,080
+log in to the Ambari console is admin
+
+36
+00:01:53,080 --> 00:01:56,950
+user ID and admin the password.
+
+37
+00:01:56,950 --> 00:02:00,700
+So here is
+
+38
+00:02:00,700 --> 00:02:05,210
+the dashboard and others services that
+are available here
+
+39
+00:02:05,210 --> 00:02:10,890
+See the different components available.
+You can monitor your entire cluster
+
+40
+00:02:10,890 --> 00:02:14,110
+through this Ambari console. I clicked on the
+
+41
+00:02:14,110 --> 00:02:18,350
+spark cluster on the spark component and see everything is good.
+
+42
+00:02:18,350 --> 00:02:22,730
+Under quick links there's the spark job
+history user interface
+
+43
+00:02:22,730 --> 00:02:28,120
+This basically shows you all the Spark
+applications that you have ran.
+
+44
+00:02:28,120 --> 00:02:35,120
+Obviously it'll be slightly different
+from what you see.
+
+45
+00:02:35,690 --> 00:02:38,340
+We're now going to do a quick
+exercise to show you
+
+46
+00:02:38,340 --> 00:02:41,900
+how the monitoring can be done using
+
+47
+00:02:41,900 --> 00:02:46,510
+caching. If you are going to cache some data, you will want to see how much memory is
+
+48
+00:02:46,510 --> 00:02:53,510
+being stored as part of the cache. 
+I'm going to start up the spark shell.
+
+49
+00:03:01,599 --> 00:03:08,599
+Then create the RDD from the readme file. 
+
+50
+00:03:09,820 --> 00:03:16,230
+Cache that readme file and then run the
+collect operation to
+
+51
+00:03:16,230 --> 00:03:20,510
+invoke the caching as well. Remember,
+actions are the ones that invokes
+
+52
+00:03:20,510 --> 00:03:25,070
+and performs the actual activity. So I
+
+53
+00:03:25,070 --> 00:03:30,300
+went ahead and quickly quit the Spark shell
+
+54
+00:03:30,300 --> 00:03:32,360
+You need to quit it so it will appear on the 
+
+55
+00:03:32,360 --> 00:03:33,140
+history server.
+
+56
+00:03:33,140 --> 00:03:37,870
+and then now on this going back to the
+history server
+
+57
+00:03:37,870 --> 00:03:42,290
+you can actually just refresh the page. It will show up. I want to make sure it
+
+58
+00:03:42,290 --> 00:03:43,130
+shows up.
+
+59
+00:03:43,130 --> 00:03:46,620
+Here you see the first entry is the shell that we just ran.
+
+60
+00:03:46,620 --> 00:03:52,270
+You click on it, you see the
+details for the jobs.
+
+61
+00:03:52,270 --> 00:03:59,100
+Up above, you click on stages
+
+62
+00:03:59,100 --> 00:04:02,810
+you see the different stages for all
+jobs.
+
+63
+00:04:02,810 --> 00:04:09,010
+Under storage is where you see the readme file
+
+64
+00:04:09,010 --> 00:04:12,620
+and how much memory it was used to
+store that
+
+65
+00:04:12,620 --> 00:04:17,250
+file so if your dataset is really large, you may consider creating a broadcast variable
+
+66
+00:04:17,250 --> 00:04:20,419
+so this is how monitoring can help you.
+you determine
+
+67
+00:04:20,419 --> 00:04:25,190
+how to make your application is more
+with memory efficient. That's basically
+
+68
+00:04:25,190 --> 00:04:26,990
+what I want show in this lab exercise.
+
+69
+00:04:26,990 --> 00:04:30,560
+on how the Ambari console looks like -- where
+
+70
+00:04:30,560 --> 00:04:33,890
+the configuration file can be set. This concludes
+
+71
+00:04:33,890 --> 00:04:37,030
+this lab exercise. I hope you enjoy the
+course
+
+72
+00:04:37,030 --> 00:04:40,200
+and stay tuned for future courses.
+

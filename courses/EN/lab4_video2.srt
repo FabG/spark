@@ -1,0 +1,377 @@
+1
+00:00:00,810 --> 00:00:04,859
+In this section of the lab exercise, you
+going to be creating a Spark
+
+2
+00:00:04,859 --> 00:00:05,650
+application
+
+3
+00:00:05,650 --> 00:00:09,240
+using the MLlib library. In this
+section
+
+4
+00:00:09,240 --> 00:00:13,099
+the Spark shell will be used to acquire
+the k-means clustering
+
+5
+00:00:13,099 --> 00:00:16,949
+or drop off latitude and longitude of taxis for the three clusters.
+
+6
+00:00:16,949 --> 00:00:20,000
+You are going to see the sample dataset
+
+7
+00:00:20,000 --> 00:00:24,170
+that we've already uploaded on to HDFS
+is going to contain
+
+8
+00:00:24,170 --> 00:00:28,160
+a subset of taxi trips with hack license,
+medallions, pick up
+
+9
+00:00:28,160 --> 00:00:32,559
+date/time drop off date/time, passenger
+information and so on and so forth
+
+10
+00:00:32,559 --> 00:00:36,420
+As such this may give you a good
+indication
+
+11
+00:00:36,420 --> 00:00:42,210
+of where it is best to hail a cab. Like I said
+we've already uploaded
+
+12
+00:00:42,210 --> 00:00:45,860
+this information or the CSV file in a
+previous exercise.
+
+13
+00:00:45,860 --> 00:00:51,600
+It is located under the /tmp directory
+labdata/sparkdata
+
+14
+00:00:51,600 --> 00:00:53,860
+so we can go take a look at
+this and
+
+15
+00:00:53,860 --> 00:00:57,140
+kind of see what the input files like.
+
+16
+00:00:57,140 --> 00:01:00,239
+I'm going to end this Scala shell here
+
+17
+00:01:00,239 --> 00:01:05,510
+from the previous exercise. Start up with
+a new shell
+
+18
+00:01:05,510 --> 00:01:10,549
+and if you want to you can take a
+look
+
+19
+00:01:10,549 --> 00:01:15,340
+at what the data looks like. It's actually
+
+20
+00:01:15,340 --> 00:01:18,930
+quite a big file. In fact, even
+
+21
+00:01:18,930 --> 00:01:22,549
+it is a subset so using the nyctaxisub
+
+22
+00:01:22,549 --> 00:01:25,640
+which is just a subset of the full
+
+23
+00:01:25,640 --> 00:01:30,880
+set of data that we used from the last exercise. So you do this is actually
+
+24
+00:01:30,880 --> 00:01:31,810
+going to take a while
+
+25
+00:01:31,810 --> 00:01:35,710
+to load everything up, but it will you give you an idea of what the
+
+26
+00:01:35,710 --> 00:01:41,670
+datatype looks like, so we won't have to sit through this in a video.
+
+27
+00:01:41,670 --> 00:01:48,670
+I'm going to speed up the process.
+
+28
+00:01:49,729 --> 00:01:52,150
+You can see how the information on
+here
+
+29
+00:01:52,150 --> 00:01:56,050
+just to get an idea of what it looks like
+
+30
+00:01:56,050 --> 00:02:00,300
+as you begin to use it with the MLlib library.
+
+31
+00:02:00,300 --> 00:02:06,369
+So let's start up to spark shell
+
+32
+00:02:06,369 --> 00:02:09,470
+as that where we are going to be writing our
+
+33
+00:02:09,470 --> 00:02:16,470
+Spark application.
+
+34
+00:02:22,300 --> 00:02:25,330
+First thing you need to do is import the necessary libraries
+
+35
+00:02:25,330 --> 00:02:31,060
+for the k-means algorithm and the vector packages. I went ahead and did that.
+
+36
+00:02:36,659 --> 00:02:42,310
+We're going to create an RDD from the data that already reside
+
+37
+00:02:42,310 --> 00:02:49,310
+in the HDFS. Normally when you import
+data in
+
+38
+00:02:50,519 --> 00:02:55,420
+you want to see how big the file is and if
+there's any way you can trim it --
+
+39
+00:02:55,420 --> 00:02:58,930
+trim unnecessary information. You should
+do that prior to
+
+40
+00:02:58,930 --> 00:03:02,799
+any data processing as the full dataset may be
+
+41
+00:03:02,799 --> 00:03:08,109
+too large or takes too long with irrelevant information. So here is a
+
+42
+00:03:08,109 --> 00:03:12,489
+way to filter out on information. We just
+want information for the year 2013
+
+43
+00:03:12,489 --> 00:03:17,239
+and of course we are going to split it up by the commas.
+
+44
+00:03:17,239 --> 00:03:23,530
+clean out some of the entries that we don't need. In fact,
+
+45
+00:03:23,530 --> 00:03:26,910
+this subset the data already contains
+
+46
+00:03:26,910 --> 00:03:30,410
+the filtered set, so that's why there are no
+changes here
+
+47
+00:03:30,410 --> 00:03:34,040
+but if you ran this on the full set, you'll
+end up with this subset.
+
+48
+00:03:34,040 --> 00:03:37,970
+So I went ahead and did that already, but that is just to show you that you should filter
+
+49
+00:03:37,970 --> 00:03:41,450
+it out.
+
+50
+00:03:41,450 --> 00:03:44,400
+Another thing we can do is to cleanse the
+
+51
+00:03:44,400 --> 00:03:47,620
+data even further by
+
+52
+00:03:47,620 --> 00:03:50,680
+just fencing
+
+53
+00:03:50,680 --> 00:03:53,940
+the information around to just New York
+City, so that's what this
+
+54
+00:03:53,940 --> 00:03:57,209
+is doing here. We are just providing the
+
+55
+00:03:57,209 --> 00:04:01,660
+coordinates for New York City specifically and filter out data that
+
+56
+00:04:01,660 --> 00:04:05,750
+are only within the boundary so now if you do another count
+
+57
+00:04:05,750 --> 00:04:10,120
+you'll see that the number rows have
+indeed been reduced
+
+58
+00:04:10,120 --> 00:04:14,049
+so it helps a little bit but now we have
+a much
+
+59
+00:04:14,049 --> 00:04:21,049
+more specific set of data to work with
+okay so next
+
+60
+00:04:22,250 --> 00:04:27,320
+you are going to want to create vectors
+with the latitude and longitude
+
+61
+00:04:27,320 --> 00:04:30,510
+they'll be used as input to the
+k-means algorithm
+
+62
+00:04:30,510 --> 00:04:33,550
+so this line here
+
+63
+00:04:33,550 --> 00:04:40,550
+is going to set up this vector for you. We're creating our taxi vector. 
+
+64
+00:04:42,860 --> 00:04:46,650
+Then the next several lines of code we
+will be
+
+65
+00:04:46,650 --> 00:04:50,510
+using to define and run the k-means algorithm.
+
+66
+00:04:50,510 --> 00:04:53,710
+So here's the iteration count, its going to be 10
+
+67
+00:04:53,710 --> 00:05:00,240
+plus the count of three. Then we are going to create our model
+
+68
+00:05:00,240 --> 00:05:03,330
+by providing the taxi,
+
+69
+00:05:03,330 --> 00:05:10,330
+the cluster count and the iteration count.
+
+70
+00:05:24,590 --> 00:05:27,600
+If you had used the larger
+
+71
+00:05:27,600 --> 00:05:30,910
+dataset, it would have taken probably up to ten minutes or so,
+
+72
+00:05:30,910 --> 00:05:35,100
+but this shorter one should have
+been significantly faster.
+
+73
+00:05:35,100 --> 00:05:38,910
+In any case, we can now generate the
+
+74
+00:05:38,910 --> 00:05:42,220
+cluster center by providing in
+
+75
+00:05:42,220 --> 00:05:45,730
+that model and mapping into the array.
+
+76
+00:05:45,730 --> 00:05:50,100
+We have an array of cluster centers.
+We're going to compute the cost
+
+77
+00:05:50,100 --> 00:05:53,550
+of these computations
+
+78
+00:05:53,550 --> 00:05:58,100
+and finally we have enough information
+to print out
+
+79
+00:05:58,100 --> 00:06:01,770
+the coordinates so the
+
+80
+00:06:01,770 --> 00:06:05,730
+best locations within New York City to
+
+81
+00:06:05,730 --> 00:06:09,250
+hail a cab, so these are the most frequent
+drop off points and 
+
+82
+00:06:09,250 --> 00:06:12,730
+locations so now we have information
+that we need
+
+83
+00:06:12,730 --> 00:06:16,000
+to indicate where its best to hail a cab.
+
+84
+00:06:16,000 --> 00:06:21,880
+So now you have seen how to use the
+k-means algorithm
+
+85
+00:06:21,880 --> 00:06:26,940
+as part of the MLlib libraries. There are other libraries within MLlib, 
+
+86
+00:06:26,940 --> 00:06:31,400
+so be sure to check those out. This concludes this portion of the lab exercise. 
+

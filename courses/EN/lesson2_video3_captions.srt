@@ -1,0 +1,443 @@
+1
+00:00:01,939 --> 00:00:07,740
+Now I want to get a bit into RDD persistence.
+You have seen this used already. That is the
+
+2
+00:00:07,740 --> 00:00:12,789
+cache function. The cache function is actually
+the default of the persist function with the
+
+3
+00:00:12,789 --> 00:00:14,379
+MEMORY_ONLY storage.
+
+4
+00:00:14,379 --> 00:00:20,910
+One of the key capability of Spark is its
+speed through persisting or caching. Each
+
+5
+00:00:20,910 --> 00:00:27,360
+node stores any partitions of the cache and
+computes it in memory. When a subsequent action
+
+6
+00:00:27,360 --> 00:00:32,480
+is called on the same dataset, or a derived
+dataset, it uses it from memory instead of
+
+7
+00:00:32,480 --> 00:00:39,480
+having to retrieve it again. Future actions
+in such cases are often 10 times faster. The
+
+8
+00:00:39,579 --> 00:00:46,469
+first time a RDD is persisted, it is kept
+in memory on the node. Caching is fault tolerant
+
+9
+00:00:46,469 --> 00:00:50,769
+because if it any of the partition is lost,
+it will automatically be recomputed using
+
+10
+00:00:50,769 --> 00:00:55,780
+the transformations that originally created
+it.
+
+11
+00:00:55,780 --> 00:01:02,109
+There are two methods to invoke RDD persistence.
+persist() and cache(). The persist() method
+
+12
+00:01:02,109 --> 00:01:06,970
+allows you to specify a different storage
+level of caching. For example, you can choose
+
+13
+00:01:06,970 --> 00:01:12,000
+to persist the data set on disk, persist it
+in memory but as serialized objects to save
+
+14
+00:01:12,000 --> 00:01:18,080
+space, etc. Again the cache() method is just
+the default way of using persistence by storing
+
+15
+00:01:18,080 --> 00:01:21,680
+deserialized objects in memory.
+
+16
+00:01:21,680 --> 00:01:26,410
+The table here shows the storage levels and
+what it means. Basically, you can choose to
+
+17
+00:01:26,410 --> 00:01:32,910
+store in memory or memory and disk. If a partition
+does not fit in the specified cache location,
+
+18
+00:01:32,910 --> 00:01:38,240
+then it will be recomputed on the fly. You
+can also decide to serialized the objects
+
+19
+00:01:38,240 --> 00:01:44,500
+before storing this. This is space efficient,
+but will require the RDD to deserialized before
+
+20
+00:01:44,500 --> 00:01:51,500
+it can be read, so it takes up more CPU workload.
+There's also the option to replicate each
+
+21
+00:01:51,690 --> 00:01:58,409
+partition on two cluster nodes. Finally, there
+is an experimental storage level storing the
+
+22
+00:01:58,409 --> 00:02:04,470
+serialized object in Tachyon. This level reduces
+garbage collection overhead and allows the
+
+23
+00:02:04,470 --> 00:02:10,250
+executors to be smaller and to share a pool
+of memory. You can read more about this on
+
+24
+00:02:10,250 --> 00:02:11,930
+Spark's website.
+
+25
+00:02:11,930 --> 00:02:18,870
+A lot of text on this page, but don't worry.
+It can be used as a reference when you have
+
+26
+00:02:18,870 --> 00:02:22,040
+to decide the type of storage level.
+
+27
+00:02:22,040 --> 00:02:25,850
+There are tradeoffs between the different
+storage levels. You should analyze your current
+
+28
+00:02:25,850 --> 00:02:31,160
+situation to decide which level works best.
+You can find this information here on Spark's
+
+29
+00:02:31,160 --> 00:02:32,780
+website.
+
+30
+00:02:32,780 --> 00:02:37,730
+Basically if your RDD fits within the default
+storage level, by all means, use that.
+
+31
+00:02:37,730 --> 00:02:43,730
+It is the fastest option to fully take advantage
+of Spark's design. If not, you can serialized
+
+32
+00:02:43,730 --> 00:02:49,510
+the RDD and use the MEMORY_ONLY_SER level.
+Just be sure to choose a fast serialization
+
+33
+00:02:49,510 --> 00:02:55,310
+library to make the objects more space efficient
+and still reasonably fast to access.
+
+34
+00:02:55,310 --> 00:02:59,930
+Don't spill to disk unless the functions that
+compute your datasets are expensive or it
+
+35
+00:02:59,930 --> 00:03:03,060
+requires a large amount of space.
+
+36
+00:03:03,060 --> 00:03:09,340
+If you want fast recovery, use the replicated
+storage levels. All levels are fully fault
+
+37
+00:03:09,340 --> 00:03:15,770
+tolerant, but would still require the recomputing
+of the data. If you have a replicated copy,
+
+38
+00:03:15,770 --> 00:03:20,530
+you can continue to work while Spark is reconstruction
+a lost partition.
+
+39
+00:03:20,530 --> 00:03:27,530
+Finally, use Tachyon if your environment has
+high amounts of memory or multiple applications.
+
+40
+00:03:27,989 --> 00:03:31,800
+It allows you to share the same pool of memory
+and significantly reduces garbage collection
+
+41
+00:03:31,800 --> 00:03:37,280
+costs. Also, the cached data is not lost if
+the individual executors crash.
+
+42
+00:03:37,280 --> 00:03:43,540
+On these last two slides, I'll talk about
+Spark's shared variables and the type of operations
+
+43
+00:03:43,540 --> 00:03:46,900
+you can do on key-value pairs.
+
+44
+00:03:46,900 --> 00:03:51,910
+Spark provides two limited types of shared
+variables for common usage patterns: broadcast
+
+45
+00:03:51,910 --> 00:03:57,090
+variables and accumulators. Normally, when
+a function is passed from the driver to a
+
+46
+00:03:57,090 --> 00:04:03,030
+worker, a separate copy of the variables are
+used for each worker. Broadcast variables
+
+47
+00:04:03,030 --> 00:04:08,750
+allow each machine to work with a read-only
+variable cached on each machine. Spark attempts
+
+48
+00:04:08,750 --> 00:04:15,010
+to distribute broadcast variables using efficient
+algorithms. As an example, broadcast variables
+
+49
+00:04:15,010 --> 00:04:20,989
+can be used to give every node a copy of a
+large dataset efficiently.
+
+50
+00:04:20,989 --> 00:04:27,270
+The other shared variables are accumulators.
+These are used for counters in sums that works
+
+51
+00:04:27,270 --> 00:04:33,139
+well in parallel. These variables can only
+be added through an associated operation.
+
+52
+00:04:33,139 --> 00:04:39,000
+Only the driver can read the accumulators
+value, not the tasks. The tasks can only add
+
+53
+00:04:39,000 --> 00:04:45,850
+to it. Spark supports numeric types but programmers
+can add support for new types. As an example,
+
+54
+00:04:45,850 --> 00:04:51,330
+you can use accumulator variables to implement
+counters or sums, as in MapReduce.
+
+55
+00:04:51,330 --> 00:04:58,330
+Last, but not least, key-value pairs are available
+in Scala, Python and Java. In Scala, you create
+
+56
+00:05:01,050 --> 00:05:08,050
+a key-value pair RDD by typing val pair = ('a'
+, 'b'). To access each element, invoke the
+
+57
+00:05:10,560 --> 00:05:17,560
+._ notation. This is not zero-index, so the
+._1 will return the value in the first index
+
+58
+00:05:20,870 --> 00:05:27,870
+and ._2 will return the value in the second
+index. Java is also very similar to Scala
+
+59
+00:05:29,199 --> 00:05:35,750
+where it is not zero-index. You create the
+Tuple2 object in Java to create a key-value
+
+60
+00:05:35,750 --> 00:05:42,300
+pair. In Python, it is a zero-index notation,
+so the value of the first index resides in
+
+61
+00:05:42,300 --> 00:05:48,949
+index 0 and the second index is 1.
+
+62
+00:05:48,949 --> 00:05:54,610
+There are special operations available to
+RDDs of key-value pairs. In an application,
+
+63
+00:05:54,610 --> 00:06:01,610
+you must remember to import the SparkContext
+package to use PairRDDFunctions such as reduceByKey.
+
+64
+00:06:01,910 --> 00:06:07,930
+The most common ones are those that perform
+grouping or aggregating by a key. RDDs containing
+
+65
+00:06:07,930 --> 00:06:14,360
+the Tuple2 object represents the key-value
+pairs. Tuple2 objects are simply created by
+
+66
+00:06:14,360 --> 00:06:21,360
+writing (a, b) as long as you import the library
+to enable Spark's implicit conversion.
+
+67
+00:06:21,610 --> 00:06:25,580
+If you have custom objects as the key inside
+your key-value pair, remember that you will
+
+68
+00:06:25,580 --> 00:06:31,020
+need to provide your own equals() method to
+do the comparison as well as a matching hashCode()
+
+69
+00:06:31,020 --> 00:06:32,270
+method.
+
+70
+00:06:32,270 --> 00:06:37,110
+So in the example, you have a textFile that
+is just a normal RDD. Then you perform some
+
+71
+00:06:37,110 --> 00:06:42,199
+transformations on it and it creates a PairRDD
+which allows it to invoke the reduceByKey
+
+72
+00:06:42,199 --> 00:06:48,800
+method that is part of the PairRDDFunctions
+API.
+
+73
+00:06:48,800 --> 00:06:52,750
+I want to spend a little bit of time here
+to explain some of the syntax that you see
+
+74
+00:06:52,750 --> 00:06:59,750
+on the slide. Note that in the first reduceByKey
+example with the a,b => a + b. This simply
+
+75
+00:07:02,680 --> 00:07:09,590
+means that for the values of the same key,
+add them up together. In the example on the
+
+76
+00:07:09,590 --> 00:07:16,590
+bottom of the slide, reduceByKey(_+_) uses
+the shorthand for anonymous function taking
+
+77
+00:07:17,880 --> 00:07:22,860
+two parameters (a and b in our case) and adding
+them together, or multiplying, or any other
+
+78
+00:07:22,860 --> 00:07:28,419
+operations for that matter.
+
+79
+00:07:28,419 --> 00:07:32,270
+Another thing I want to point is that for
+the goal of brevity, all the functions are
+
+80
+00:07:32,270 --> 00:07:37,340
+concatenated on one line. When you actually
+code it yourself, you may want split each
+
+81
+00:07:37,340 --> 00:07:44,340
+of the functions up. For example, do the flatMap
+operation and return that to a RDD. Then from
+
+82
+00:07:44,360 --> 00:07:51,360
+that RDD, do the map operation to create another
+RDD. Then finally, from that last RDD, invoke
+
+83
+00:07:51,740 --> 00:07:57,630
+the reduceByKey method. That would yield multiple
+lines, but you would be able to test each
+
+84
+00:07:57,630 --> 00:08:02,430
+of the transformation to see if it worked
+properly.
+
+85
+00:08:02,430 --> 00:08:07,930
+So having completed this lesson, you should
+now be able to describe pretty well, RDDs.
+
+86
+00:08:07,930 --> 00:08:13,550
+You should also understand how to create RDDs
+using various methods including from existing
+
+87
+00:08:13,550 --> 00:08:20,550
+datasets, external datasets such as a textFile
+or from HDFS, or even just from existing RDDs.
+
+88
+00:08:22,030 --> 00:08:27,050
+You saw various RDD operations and saw how
+to work with shared variables and key-value
+
+89
+00:08:27,050 --> 00:08:28,949
+pairs.
+
+90
+00:08:28,949 --> 00:08:35,949
+Next steps. Complete lab exercise #2 Working
+with RDD operations. Then proceed to the next
+
+91
+00:08:37,839 --> 00:08:39,079
+lesson in this course.
+

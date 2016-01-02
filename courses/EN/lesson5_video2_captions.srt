@@ -1,0 +1,308 @@
+1
+00:00:02,129 --> 00:00:08,429
+There are three ways to monitor Spark applications.
+The first way is the Web UI. The default port
+
+2
+00:00:08,429 --> 00:00:15,429
+is 4040. The port in the lab environment is
+8088. The information on this UI is available
+
+3
+00:00:15,550 --> 00:00:20,349
+for the duration of the application. If you
+want to see the information after the fact,
+
+4
+00:00:20,349 --> 00:00:27,019
+set the spark.eventLog.enabled to true before
+starting the application. The information
+
+5
+00:00:27,019 --> 00:00:31,460
+will then be persisted to storage as well.
+
+6
+00:00:31,460 --> 00:00:36,750
+Metrics is another way to monitor Spark applications.
+The metric system is based on the Coda Hale
+
+7
+00:00:36,750 --> 00:00:43,750
+Metrics Library. You can customize it so that
+it reports to a variety of sinks such as CSV.
+
+8
+00:00:44,790 --> 00:00:50,800
+You can configure the metrics system in the
+metrics.properties file under the conf directory.
+
+9
+00:00:50,800 --> 00:00:57,390
+Finally, you can also use external instrumentations
+to monitor Spark. Gangalia is used to view
+
+10
+00:00:57,390 --> 00:01:04,390
+overall cluster utilization and resource bottlenecks.
+Various OS profiling tools and JVM utilities
+
+11
+00:01:05,470 --> 00:01:10,569
+can also be used for monitoring Spark.
+
+12
+00:01:10,569 --> 00:01:15,689
+The Web UI is found on port 4040, by default,
+and shows the information for the current
+
+13
+00:01:15,689 --> 00:01:18,590
+application while it is running.
+
+14
+00:01:18,590 --> 00:01:23,590
+The Web UI contains the following information.
+A list of scheduler stages and tasks.
+
+15
+00:01:23,590 --> 00:01:29,549
+A summary of RDD sizes and memory usage.
+Environmental information and information
+
+16
+00:01:29,549 --> 00:01:32,659
+about the running executors.
+
+17
+00:01:32,659 --> 00:01:37,959
+To view the history of an application after
+it has ran, you can start up the history server.
+
+18
+00:01:37,959 --> 00:01:42,469
+The history server can be configured on the
+amount of memory allocated for it, the various
+
+19
+00:01:42,469 --> 00:01:47,759
+JVM options, the public address for the server,
+and a number of properties.
+
+20
+00:01:47,759 --> 00:01:52,060
+You will see all of this in the lab exercise.
+
+21
+00:01:52,060 --> 00:01:57,340
+Spark programs can be bottlenecked by any
+resource in the cluster. Due to Spark's nature
+
+22
+00:01:57,340 --> 00:02:02,349
+of the in-memory computations, data serialization
+and memory tuning are two areas that will
+
+23
+00:02:02,349 --> 00:02:08,030
+improve performance. Data serialization is
+crucial for network performance and to reduce
+
+24
+00:02:08,030 --> 00:02:14,670
+memory use. It is often the first thing you
+should look at when tuning Spark applications.
+
+25
+00:02:14,670 --> 00:02:21,000
+Spark provides two serialization libraries.
+Java serialization provides a lot more flexibility,
+
+26
+00:02:21,000 --> 00:02:27,000
+but it is quiet slow and leads to large serialized
+objects. This is the default library that
+
+27
+00:02:27,000 --> 00:02:34,000
+Spark uses to serialize objects. Kyro serialization
+is much quicker than Java, but does not support
+
+28
+00:02:34,790 --> 00:02:40,000
+all Serializable types. It would require you
+to register these types in advance for best
+
+29
+00:02:40,000 --> 00:02:47,000
+performance. To use Kyro serialization, you
+can set it using the SparkConf object.
+
+30
+00:02:47,540 --> 00:02:51,960
+With memory tuning, you have to consider three
+things. The amount of memory used by the objects
+
+31
+00:02:51,960 --> 00:02:56,670
+(whether or not you want the entire object
+to fit in memory). The cost of accessing those
+
+32
+00:02:56,670 --> 00:03:01,460
+objects and the overhead garbage collection.
+
+33
+00:03:01,460 --> 00:03:07,040
+You can determine how much memory your dataset
+requires by creating a RDD, put it into cache,
+
+34
+00:03:07,040 --> 00:03:11,870
+and look at the SparkContext log on your driver
+program. Examining that log will show you
+
+35
+00:03:11,870 --> 00:03:15,930
+how much memory your dataset uses.
+
+36
+00:03:15,930 --> 00:03:20,900
+Few tips to reduce the amount of memory used
+by each object. Try to avoid Java features
+
+37
+00:03:20,900 --> 00:03:26,950
+that add overhead such as pointer based data
+structures and wrapper objects. If possible
+
+38
+00:03:26,950 --> 00:03:33,950
+go with arrays or primitive types and try
+to avoid nested structures.
+
+39
+00:03:34,050 --> 00:03:39,290
+Serialized storage can also help to reduce
+memory usage. The downside would be that it
+
+40
+00:03:39,290 --> 00:03:43,550
+will take longer to access the object because
+you have to deserialized it before you can
+
+41
+00:03:43,550 --> 00:03:45,490
+use it.
+
+42
+00:03:45,490 --> 00:03:49,840
+You can collect statistics on the garbage
+collection to see how frequently it occurs
+
+43
+00:03:49,840 --> 00:03:56,840
+and the amount of time spent on it. To do
+so, add the line to the SPARK_JAVA_OPTS environment
+
+44
+00:03:57,380 --> 00:03:58,990
+variable.
+
+45
+00:03:58,990 --> 00:04:04,270
+The level of parallelism should be considered
+in order to fully utilize your cluster. It
+
+46
+00:04:04,270 --> 00:04:08,790
+is automatically set to the file size of the
+task, but you can configure this through optional
+
+47
+00:04:08,790 --> 00:04:15,790
+parameters such as in the SparkContext.textFile.
+You can also set the default level in the
+
+48
+00:04:15,940 --> 00:04:21,959
+spark.default.parallelism config property.
+Generally, it is recommended to set 2-3 tasks
+
+49
+00:04:21,959 --> 00:04:25,690
+per CPU core in the cluster.
+
+50
+00:04:25,690 --> 00:04:30,900
+Sometimes when your RDD does not fit in memory,
+you will get an OutOfMemoryError. In cases
+
+51
+00:04:30,900 --> 00:04:36,480
+like this, often by increasing the level of
+parallelism will resolve this issue. By increasing
+
+52
+00:04:36,480 --> 00:04:43,480
+the level, each set of task input will be
+smaller, so it can fit in memory.
+
+53
+00:04:43,630 --> 00:04:48,690
+Using Spark's capability to broadcast large
+variables greatly reduces the size of the
+
+54
+00:04:48,690 --> 00:04:54,560
+serialized object. A good example would be
+if you have some type of static lookup table.
+
+55
+00:04:54,560 --> 00:04:58,520
+Consider turning that into a broadcast variable
+so it does not need to be passed on to each
+
+56
+00:04:58,520 --> 00:05:01,870
+of the worker nodes.
+
+57
+00:05:01,870 --> 00:05:07,020
+Spark prints the serialized size of each tasks
+in the master. Check that out to examine if
+
+58
+00:05:07,020 --> 00:05:12,470
+any tasks are too large. If you see some tasks
+larger than 20KB, it's worth taking a look
+
+59
+00:05:12,470 --> 00:05:19,470
+to see if you can optimize it further, such
+as creating broadcast variables.
+
+60
+00:05:19,870 --> 00:05:24,160
+Having completed this lesson, you should be
+able to describe the cluster overview. You
+
+61
+00:05:24,160 --> 00:05:28,950
+should also know where and how to set Spark
+configuration properties. You also saw how
+
+62
+00:05:28,950 --> 00:05:34,330
+to monitor Spark using the UI, metrics or
+various external tools. Finally, you should
+
+63
+00:05:34,330 --> 00:05:38,080
+understand some performance tuning considerations.
+
+64
+00:05:38,080 --> 00:05:45,080
+Next steps. Complete lab exercise #5 and then,
+congratulations, you have completed this course.
+

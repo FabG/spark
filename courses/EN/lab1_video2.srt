@@ -1,0 +1,473 @@
+1
+00:00:01,230 --> 00:00:03,860
+Okay so we finished with the Scala
+
+2
+00:00:03,860 --> 00:00:08,290
+exercises for now, but keep this terminal
+open. We'll continue
+
+3
+00:00:08,290 --> 00:00:12,889
+with more RDD operations. Open up a new terminal
+
+4
+00:00:12,889 --> 00:00:17,119
+so that we can do the same steps we've
+done using Python this time.
+
+5
+00:00:17,119 --> 00:00:21,070
+We're going to be working with the same
+Readme file
+
+6
+00:00:21,070 --> 00:00:24,740
+because we have already uploaded that
+readme file
+
+7
+00:00:24,740 --> 00:00:28,769
+to the HDFS we won't need to do it again
+but if you skipped through that Scala
+
+8
+00:00:28,769 --> 00:00:29,349
+section
+
+9
+00:00:29,349 --> 00:00:32,640
+go ahead and upload that file now. Otherwise
+
+10
+00:00:32,640 --> 00:00:36,290
+start up, pyspark, which is located under the spark_home
+
+11
+00:00:36,290 --> 00:00:43,020
+/bin directory. This is now
+
+12
+00:00:43,020 --> 00:00:47,559
+the Python shell. We can run the Python API
+
+13
+00:00:47,559 --> 00:00:54,070
+that can invoke the Spark operations.
+First thing we're going to do is create the
+
+14
+00:00:54,070 --> 00:00:54,699
+readme
+
+15
+00:00:54,699 --> 00:00:57,840
+RDD. Also using the same Spark context
+
+16
+00:00:57,840 --> 00:01:04,840
+textFile(README.md). Again, that
+was just a transformation
+
+17
+00:01:05,019 --> 00:01:09,850
+so no action has been taken place yet. We do a readme.count(),
+
+18
+00:01:09,850 --> 00:01:16,850
+this will give us the count of that file. 141
+
+19
+00:01:19,090 --> 00:01:21,570
+You will noticed that sometimes it doesn't go back to the prompt.
+
+20
+00:01:21,570 --> 00:01:26,820
+Just hit enter and it will bring you back. I
+just went ahead and ran the readme.first()
+
+21
+00:01:27,260 --> 00:01:30,260
+Again ,same thing. It just grabs the
+
+22
+00:01:30,260 --> 00:01:34,290
+first-line from the readme RDD.
+
+23
+00:01:34,290 --> 00:01:39,790
+Next we're going to
+
+24
+00:01:39,790 --> 00:01:42,830
+filter, user the filter transformation
+
+25
+00:01:42,830 --> 00:01:46,600
+to find the lines with the word spark in
+it.
+
+26
+00:01:46,600 --> 00:01:50,780
+That creates the linesWithSpark RDD 
+
+27
+00:01:50,780 --> 00:01:54,990
+likewise, you can also chain together
+
+28
+00:01:54,990 --> 00:01:58,450
+multiple operations. So I did a filter
+
+29
+00:01:58,450 --> 00:02:01,840
+and then I chained together the count operation to get it to return
+
+30
+00:02:01,840 --> 00:02:05,140
+the value 21, which is the number of lines 
+
+31
+00:02:05,140 --> 00:02:12,140
+containing the words spark in it.
+
+32
+00:02:15,180 --> 00:02:18,689
+okay so that's pretty much the same task
+we've done for the Python shell. Go ahead and
+
+33
+00:02:18,689 --> 00:02:21,840
+minimize the Python shell. We will resume with Scala
+
+34
+00:02:21,840 --> 00:02:26,139
+and focus more on some additional RDD
+operations.
+
+35
+00:02:26,139 --> 00:02:29,889
+In particular we're going to look at the
+map and the reduce
+
+36
+00:02:29,889 --> 00:02:34,040
+operations. This case here we're going to
+
+37
+00:02:34,040 --> 00:02:37,849
+take the readme file and have it split the
+line
+
+38
+00:02:37,849 --> 00:02:41,370
+on the space, in order to find the size 
+
+39
+00:02:41,370 --> 00:02:46,079
+of that line.Essentially we're doing the
+map operation to get it to split
+
+40
+00:02:46,079 --> 00:02:49,510
+and then the size. The second part is to
+reduce
+
+41
+00:02:49,510 --> 00:02:52,609
+the map output
+
+42
+00:02:52,609 --> 00:02:59,510
+to find the line with the most words in
+it. Essentially we want to see
+
+43
+00:02:59,510 --> 00:03:06,510
+which lines has the most words and that's
+what the reduce operation here is doing
+
+44
+00:03:10,370 --> 00:03:12,390
+So line 15 contains the most word
+
+45
+00:03:12,390 --> 00:03:16,990
+in it. Again I have to hit the enter key
+
+46
+00:03:16,990 --> 00:03:23,830
+to get back to the Scala prompt. In this next step,
+
+47
+00:03:23,830 --> 00:03:27,800
+I want to show you how you can import
+additional libraries
+
+48
+00:03:27,800 --> 00:03:31,840
+to do what you need to do. In this case
+we're going to do the same operation we
+
+49
+00:03:31,840 --> 00:03:32,690
+just done,
+
+50
+00:03:32,690 --> 00:03:36,380
+but this time using the math.max()
+function so I imported the
+
+51
+00:03:36,380 --> 00:03:41,860
+math library from Java and then
+
+52
+00:03:41,860 --> 00:03:45,410
+this line now, the map is still the same
+
+53
+00:03:45,410 --> 00:03:49,590
+were gonna split on the space and going to find the size of the line and then we are going to 
+
+54
+00:03:49,590 --> 00:03:50,380
+reduce
+
+55
+00:03:50,380 --> 00:03:53,500
+the output using this
+
+56
+00:03:53,500 --> 00:03:57,250
+math.max operation and this will
+show you that
+
+57
+00:03:57,250 --> 00:04:01,060
+the result will still be the same. We
+just used a different route of
+
+58
+00:04:01,060 --> 00:04:04,560
+accessing it and in this case we're using
+
+59
+00:04:04,560 --> 00:04:08,060
+a library to help us accomplish the task.
+
+60
+00:04:08,060 --> 00:04:13,760
+Spark also supports MapReduce
+
+61
+00:04:13,760 --> 00:04:16,700
+like as a data flow pattern, so not just
+the
+
+62
+00:04:16,700 --> 00:04:21,100
+the map and reduce you just saw, but the map and reduce data flow which will
+
+63
+00:04:21,100 --> 00:04:26,550
+used to do a word count. Now this is
+something you've all been familiar with.
+
+64
+00:04:26,550 --> 00:04:31,720
+So in MapReduce you actually have
+
+65
+00:04:31,720 --> 00:04:35,290
+to code quite a few statements in order to
+get the word count
+
+66
+00:04:35,290 --> 00:04:40,490
+of a file. In Spark it is actually a simple
+
+67
+00:04:40,490 --> 00:04:45,400
+chain of operations. First thing you have do is split the line up
+
+68
+00:04:45,400 --> 00:04:49,470
+individually by the words and then you will map
+
+69
+00:04:49,470 --> 00:04:52,620
+the word to the value of one.
+
+70
+00:04:52,620 --> 00:04:57,840
+So essentially know every word and get
+value one and then finally you reduced
+
+71
+00:04:57,840 --> 00:04:58,840
+by that key
+
+72
+00:04:58,840 --> 00:05:02,880
+which is the word and you add in all the
+values together
+
+73
+00:05:02,880 --> 00:05:06,610
+to get you the number of occurrences of a
+particular word.
+
+74
+00:05:06,610 --> 00:05:11,670
+That was just the transformation.
+
+75
+00:05:11,670 --> 00:05:15,560
+Let's invoke an action on it. We're going to call the collect() action.
+
+76
+00:05:15,560 --> 00:05:22,560
+to take a look at all the work count.
+
+77
+00:05:31,370 --> 00:05:34,419
+Now as you can see here, everything is now output on a terminal,
+
+78
+00:05:34,419 --> 00:05:38,330
+and you can see that the words and the
+
+79
+00:05:38,330 --> 00:05:45,330
+number of occurrences within the readme file. Now you can do the same thing
+
+80
+00:05:45,840 --> 00:05:50,710
+with Python, so I am going to jump back to the Python shell and show you again how to
+
+81
+00:05:50,710 --> 00:05:53,849
+do the normal map and reduce to
+
+82
+00:05:53,849 --> 00:06:00,849
+find the line with the most words in
+it. So, in Python
+
+83
+00:06:01,569 --> 00:06:05,719
+we're calling the map function to split lines up and then grab the length of the
+
+84
+00:06:05,719 --> 00:06:09,620
+number words for that line and
+then we reduce it
+
+85
+00:06:09,620 --> 00:06:13,110
+to see which one has the greater number
+of words.
+
+86
+00:06:13,110 --> 00:06:16,819
+That's what will be finally printed to the output, and that is 15.
+
+87
+00:06:16,819 --> 00:06:20,590
+So this same results because we're
+working with the same file.
+
+88
+00:06:20,590 --> 00:06:24,389
+Likewise
+
+89
+00:06:24,389 --> 00:06:28,270
+you can also use a math function of some
+sort. In this case
+
+90
+00:06:28,270 --> 00:06:35,270
+we're gonna define the max function. So the max of a and b
+
+91
+00:06:38,530 --> 00:06:41,980
+So if a is greater than b, we're going to return a
+
+92
+00:06:41,980 --> 00:06:48,980
+otherwise we're going to return b.
+Basically the same operations
+
+93
+00:06:49,390 --> 00:06:53,080
+there were performed in the 
+
+94
+00:06:53,080 --> 00:06:57,900
+math.max() function. Okay so now
+
+95
+00:06:57,900 --> 00:07:01,230
+you have defined that max function,
+we're going to use it
+
+96
+00:07:01,230 --> 00:07:04,560
+in the map and reduce to
+
+97
+00:07:04,560 --> 00:07:11,560
+find the number of lines with the most words in it.
+
+98
+00:07:13,510 --> 00:07:17,310
+The mapping parts stays the same.  We're still splitting up and then counting the number of
+
+99
+00:07:17,310 --> 00:07:17,850
+words
+
+100
+00:07:17,850 --> 00:07:23,330
+and then we invoke the reduce by passing in the max function and in this case
+
+101
+00:07:23,330 --> 00:07:23,840
+again
+
+102
+00:07:23,840 --> 00:07:26,860
+it is the same number which is expected.
+
+103
+00:07:26,860 --> 00:07:31,470
+To do a word count,
+
+104
+00:07:31,470 --> 00:07:34,750
+we're going do the flatMap first. flatMap, 
+
+105
+00:07:34,750 --> 00:07:39,440
+what it does is it essentially breaks up the individual
+
+106
+00:07:39,440 --> 00:07:42,870
+lines into words and then
+
+107
+00:07:42,870 --> 00:07:46,580
+from the individual words we do a map
+operation to get it to a value
+
+108
+00:07:46,580 --> 00:07:51,250
+1 and it finally we can add up all those
+values to get the number of occurrences
+
+109
+00:07:51,250 --> 00:07:54,580
+and we run the collect() action again to see the results.
+

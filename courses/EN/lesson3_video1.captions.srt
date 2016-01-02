@@ -1,0 +1,272 @@
+1
+00:00:01,490 --> 00:00:08,490
+Hi. Welcome to the Spark Fundamentals course.
+This lesson will cover Spark application programming.
+
+2
+00:00:10,309 --> 00:00:14,419
+After completing this lesson, you should be
+able to understand the purpose and usage of
+
+3
+00:00:14,419 --> 00:00:19,250
+the SparkContext.This lesson will show you
+how to can get started by programming your
+
+4
+00:00:19,250 --> 00:00:24,720
+own Spark application. First you will see
+how to link to Spark. Next you will see how
+
+5
+00:00:24,720 --> 00:00:29,460
+to run some Spark examples. You should also
+be able to understand how to pass functions
+
+6
+00:00:29,460 --> 00:00:34,840
+to Spark and be able to create and run a Spark
+standalone application. Finally, you should
+
+7
+00:00:34,840 --> 00:00:39,700
+be able to submit applications to the Spark
+cluster.
+
+8
+00:00:39,700 --> 00:00:44,710
+The SparkContext is the main entry point to
+everything Spark. It can be used to create
+
+9
+00:00:44,710 --> 00:00:51,190
+RDDs and shared variables on the cluster.
+When you start up the Spark Shell, the SparkContext
+
+10
+00:00:51,190 --> 00:00:56,820
+is automatically initialized for you with
+the variable sc. For a Spark application,
+
+11
+00:00:56,820 --> 00:01:01,760
+you must first import some classes and implicit
+conversions and then create the SparkContext
+
+12
+00:01:01,760 --> 00:01:08,760
+object. The three import statements for Scala
+are shown on the slide here.
+
+13
+00:01:11,049 --> 00:01:16,280
+Each Spark application you create requires
+certain dependencies. The next three slides
+
+14
+00:01:16,280 --> 00:01:20,310
+will show you how to link to those dependencies
+depending on which programming language you
+
+15
+00:01:20,310 --> 00:01:22,659
+decide to use.
+
+16
+00:01:22,659 --> 00:01:27,149
+To link with Spark using Scala, you must have
+a compatible version of Scala with the Spark
+
+17
+00:01:27,149 --> 00:01:33,729
+you choose to use. For example, Spark 1.1.1
+uses Scala 2.10, so make sure that you have
+
+18
+00:01:33,729 --> 00:01:39,840
+Scala 2.10 if you wish to write applications
+for Spark 1.1.1.
+
+19
+00:01:39,840 --> 00:01:45,539
+To write a Spark application, you must add
+a Maven dependency on Spark. The information
+
+20
+00:01:45,539 --> 00:01:50,590
+is shown on the slide here. If you wish to
+access a Hadoop cluster, you need to add a
+
+21
+00:01:50,590 --> 00:01:52,200
+dependency to that as well.
+
+22
+00:01:52,200 --> 00:01:57,789
+In the lab environment, this is already set
+up for you. The information on this page shows
+
+23
+00:01:57,789 --> 00:02:02,200
+how you would set up for your own Spark cluster.
+
+24
+00:02:02,200 --> 00:02:09,200
+Spark 1.1.1 works with Python 2.6 or higher,
+but not Python 3. It uses the standard CPython
+
+25
+00:02:09,750 --> 00:02:15,030
+interpreter, so C libraries like NumPy can
+be used.
+
+26
+00:02:15,030 --> 00:02:21,140
+To run Spark applications in Python, use the
+bin/spark-submit script located in the Spark's
+
+27
+00:02:21,140 --> 00:02:26,900
+home directory. This script will load the
+Spark's Java/Scala libraries and allow you
+
+28
+00:02:26,900 --> 00:02:32,390
+to submit applications to a cluster. If you
+wish to use HDFS, you will have to link to
+
+29
+00:02:32,390 --> 00:02:37,220
+it as well. In the lab environment, you will
+not need to do this as Spark is bundled with
+
+30
+00:02:37,220 --> 00:02:44,220
+it. You also need to import some Spark classes
+shown here.
+
+31
+00:02:44,360 --> 00:02:50,590
+Spark 1.1.1 works with Java 6 and higher.
+If you are using Java 8, Spark supports lambda
+
+32
+00:02:50,590 --> 00:02:57,590
+expressions for concisely writing functions.
+Otherwise, you can use the org.apache.spark.api.java.function
+
+33
+00:02:57,870 --> 00:03:00,820
+package with older Java versions.
+
+34
+00:03:00,820 --> 00:03:07,560
+As with Scala, you need to a dependency on
+Spark, which is available through Maven Central.
+
+35
+00:03:07,560 --> 00:03:13,690
+If you wish to access an HDFS cluster, you
+must add the dependency there as well. Last,
+
+36
+00:03:13,690 --> 00:03:20,690
+but not least, you need to import some Spark
+classes.
+
+37
+00:03:20,930 --> 00:03:25,380
+Once you have the dependencies established,
+the first thing is to do in your Spark application
+
+38
+00:03:25,380 --> 00:03:31,630
+before you can initialize Spark is to build
+a SparkConf object. This object contains information
+
+39
+00:03:31,630 --> 00:03:33,540
+about your application.
+
+40
+00:03:33,540 --> 00:03:40,540
+For example, val conf = new SparkConf().setAppName(appName).setMaster(master).
+
+41
+00:03:42,960 --> 00:03:48,360
+You set the application name and tell it which
+is the master node. The master parameter can
+
+42
+00:03:48,360 --> 00:03:54,780
+be a standalone Spark distribution, Mesos,
+or a YARN cluster URL. You can also decide
+
+43
+00:03:54,780 --> 00:04:01,780
+to use the local keyword string to run it
+in local mode. In fact, you can run local[16]
+
+44
+00:04:02,040 --> 00:04:07,250
+to specify the number of cores to allocate
+for that particular job or Spark shell as
+
+45
+00:04:07,250 --> 00:04:09,800
+16.
+
+46
+00:04:09,800 --> 00:04:13,730
+For production mode, you would not want to
+hardcode the master path in your program.
+
+47
+00:04:13,730 --> 00:04:18,949
+Instead, launch it as an argument to the spark-submit
+command.
+
+48
+00:04:18,949 --> 00:04:23,979
+Once you have the SparkConf all set up, you
+pass it as a parameter to the SparkContext
+
+49
+00:04:23,979 --> 00:04:29,550
+constructor to create the SparkContext
+
+50
+00:04:29,550 --> 00:04:34,960
+Here's the information for Python. It is pretty
+much the same information as Scala. The syntax
+
+51
+00:04:34,960 --> 00:04:39,749
+here is slightly different, otherwise, you
+are required to set up a SparkConf object
+
+52
+00:04:39,749 --> 00:04:45,060
+to pass as a parameter to the SparkContext
+object. You are also recommended to pass the
+
+53
+00:04:45,060 --> 00:04:52,060
+master parameter as an argument to the spark-submit
+operation.
+
+54
+00:04:53,259 --> 00:04:58,749
+Here's the same information for Java. Same
+idea, you need to create the SparkConf object
+
+55
+00:04:58,749 --> 00:05:04,810
+and pass that to the SparkContext, which in
+this case, would be a JavaSparkContext. Remember,
+
+56
+00:05:04,810 --> 00:05:08,800
+when you imported statements in the program,
+you imported the JavaSparkContext libraries.
+

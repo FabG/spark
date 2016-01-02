@@ -1,0 +1,336 @@
+1
+00:00:00,490 --> 00:00:05,830
+Spark runs on Windows or Unix-like systems.
+The lab exercises that are part of this course
+
+2
+00:00:05,830 --> 00:00:10,360
+will be running with IBM BigInsights. The
+information on this slide shows you how you
+
+3
+00:00:10,360 --> 00:00:14,219
+can install the standalone version yourself
+with all the default values that come along
+
+4
+00:00:14,219 --> 00:00:16,010
+with it.
+
+5
+00:00:16,010 --> 00:00:21,670
+To install Spark, simply download the pre-built
+version of Spark and place a compiled version
+
+6
+00:00:21,670 --> 00:00:27,060
+of Spark on each node of your cluster. Then
+you can manually start the cluster by executing
+
+7
+00:00:27,060 --> 00:00:33,790
+./sbin/start-master.sh . In the lab, the start
+script is different, and you will see this
+
+8
+00:00:33,790 --> 00:00:35,790
+in the lab exercise guide.
+
+9
+00:00:35,790 --> 00:00:41,360
+Again, the default URL to the master UI is
+on port 8080. The lab exercise environment
+
+10
+00:00:41,360 --> 00:00:44,820
+will be different and you will see this in
+the guide as well.
+
+11
+00:00:44,820 --> 00:00:47,410
+You can check out Spark's website for more
+information:
+
+12
+00:00:48,480 --> 00:00:54,350
+Spark jobs can be written in Scala, Python
+or Java. Spark shells are available for Scala
+
+13
+00:00:54,350 --> 00:00:59,230
+or Python. This course will not teach how
+to program in each specific language, but
+
+14
+00:00:59,230 --> 00:01:03,350
+will cover how to use them within the context
+of Spark. It is recommended that you have
+
+15
+00:01:03,350 --> 00:01:07,469
+at least some programming background to understand
+how to code in any of these.
+
+16
+00:01:07,469 --> 00:01:11,640
+If you are setting up the Spark cluster yourself,
+you will have to make sure that you have a
+
+17
+00:01:11,640 --> 00:01:16,850
+compatible version of the programming language
+you choose to use. This information can be
+
+18
+00:01:16,850 --> 00:01:21,450
+found on Spark's website. In the lab environment,
+everything has been set up for you - all you
+
+19
+00:01:21,450 --> 00:01:24,880
+do is launch up the shell and you are ready
+to go.
+
+20
+00:01:24,880 --> 00:01:29,670
+Spark itself is written in the Scala language,
+so it is natural to use Scala to write Spark
+
+21
+00:01:29,670 --> 00:01:35,909
+applications. This course will cover code
+examples from by Scala, Python, and Java.
+
+22
+00:01:35,909 --> 00:01:40,869
+Java 8 actually supports the functional programming
+style to include lambdas, which concisely
+
+23
+00:01:40,869 --> 00:01:45,819
+captures the functionality that are executed
+by the Spark engine. This bridges the gap
+
+24
+00:01:45,819 --> 00:01:52,819
+between Java and Scala for developing applications
+on Spark. Java 6 and 7 is supported, but would
+
+25
+00:01:53,009 --> 00:01:57,499
+require more work and an additional library
+to get the same amount of functionality as
+
+26
+00:01:57,499 --> 00:02:01,369
+you would using Scala or Python.
+
+27
+00:02:01,369 --> 00:02:07,679
+Here we have a brief overview of Scala. Everything
+in Scala is an object. The primitive types
+
+28
+00:02:07,679 --> 00:02:13,480
+that is defined by Java such as int or boolean
+are objects in Scala. Functions are objects
+
+29
+00:02:13,480 --> 00:02:18,780
+in Scala and will play an important role in
+how applications are written for Spark.
+
+30
+00:02:18,780 --> 00:02:25,500
+Numbers are objects. This means that in an
+expression that you see here: 1 + 2 * 3 / 4
+
+31
+00:02:25,500 --> 00:02:32,500
+actually means that the individual numbers
+invoke the various identifiers +,-,*,/ with
+
+32
+00:02:33,030 --> 00:02:38,970
+the other numbers passed in as arguments using
+the dot notation.
+
+33
+00:02:38,970 --> 00:02:43,480
+Functions are objects. You can pass functions
+as arguments into another function. You can
+
+34
+00:02:43,480 --> 00:02:49,040
+store them as variables. You can return them
+from other functions. The function declaration
+
+35
+00:02:49,040 --> 00:02:54,360
+is the function name followed by the list
+of parameters and then the return type.
+
+36
+00:02:54,360 --> 00:02:58,840
+This slide and the next is just to serve as
+a very brief overview of Scala. If you wish
+
+37
+00:02:58,840 --> 00:03:04,250
+to learn more about Scala, check out its website
+for tutorials and guide. Throughout this course,
+
+38
+00:03:04,250 --> 00:03:08,760
+you will see examples in Scala that will have
+explanations on what it does. Remember, the
+
+39
+00:03:08,760 --> 00:03:13,070
+focus of this course is on the context of
+Spark. It is not intended to teach Scala,
+
+40
+00:03:13,070 --> 00:03:16,490
+Python or Java.
+
+41
+00:03:16,490 --> 00:03:21,040
+Anonymous functions are very common in Spark
+applications. Essentially, if the function
+
+42
+00:03:21,040 --> 00:03:26,310
+you need is only going to be required once,
+there is really no value in naming it. Just
+
+43
+00:03:26,310 --> 00:03:31,620
+use it anonymously on the go and forget about
+it. For example, suppose you have a timeFlies
+
+44
+00:03:31,620 --> 00:03:38,620
+function and it in, you just print a statement
+to the console. In another function, oncePerSecond,
+
+45
+00:03:38,730 --> 00:03:43,240
+you need to call this timeFlies function.
+Without anonymous functions, you would code
+
+46
+00:03:43,240 --> 00:03:49,780
+it like the top example be defining the timeFlies
+function. Using the anonymous function capability,
+
+47
+00:03:49,780 --> 00:03:53,960
+you just provide the function with arguments,
+the right arrow, and the body of the function
+
+48
+00:03:53,960 --> 00:04:00,120
+after the right arrow as in the bottom example.
+Because this is the only place you will be
+
+49
+00:04:00,120 --> 00:04:05,450
+using this function, you do not need to name
+the function.
+
+50
+00:04:05,450 --> 00:04:10,620
+The Spark shell provides a simple way to learn
+Spark's API. It is also a powerful tool to
+
+51
+00:04:10,620 --> 00:04:16,650
+analyze data interactively. The Shell is available
+in either Scala, which runs on the Java VM,
+
+52
+00:04:16,650 --> 00:04:22,210
+or Python. To start up Scala, execute the
+command spark-shell from within the Spark's
+
+53
+00:04:22,210 --> 00:04:28,729
+bin directory. To create a RDD from a text
+file, invoke the textFile method with the
+
+54
+00:04:28,729 --> 00:04:33,229
+sc object, which is the SparkContext. We'll
+talk more about these functions in a later
+
+55
+00:04:33,229 --> 00:04:35,430
+lesson.
+
+56
+00:04:35,430 --> 00:04:39,150
+To start up the shell for Python, you would
+execute the pyspark command from the same
+
+57
+00:04:39,150 --> 00:04:44,650
+bin directory. Then, invoking the textFile
+command will also create a RDD for that text
+
+58
+00:04:44,650 --> 00:04:45,319
+file.
+
+59
+00:04:45,319 --> 00:04:50,669
+In the lab exercise, you will start up either
+of the shells and run a series of RDD transformations
+
+60
+00:04:50,669 --> 00:04:56,360
+and actions to get a feel of how to work with
+Spark. In a later lesson and exercise, you
+
+61
+00:04:56,360 --> 00:04:59,300
+will get to dive deeper into RDDs.
+
+62
+00:04:59,300 --> 00:05:02,759
+Having completed this lesson, you should now
+understand what Spark is all about and why
+
+63
+00:05:02,759 --> 00:05:07,099
+you would want to use it. You should be able
+to list and describe the components in the
+
+64
+00:05:07,099 --> 00:05:12,819
+Spark stack as well as understand the basics
+of Spark's primary abstraction, the RDDs.
+
+65
+00:05:12,819 --> 00:05:17,759
+You also saw how to download and install Spark's
+standalone if you wish to, or you can use
+
+66
+00:05:17,759 --> 00:05:22,419
+the provided lab environment. You got a brief
+overview of Scala and saw how to launch and
+
+67
+00:05:22,419 --> 00:05:26,669
+use the two Spark Shells.
+
+68
+00:05:26,669 --> 00:05:30,810
+You have completed this lesson. Go on to the
+first lab exercise and then proceed to the
+
+69
+00:05:30,810 --> 00:05:32,160
+next lesson in this course.
+

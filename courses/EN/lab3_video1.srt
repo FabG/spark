@@ -1,0 +1,457 @@
+1
+00:00:00,820 --> 00:00:03,709
+Welcome to exercise 3: Creating a Spark Application
+
+2
+00:00:03,709 --> 00:00:06,819
+This exercise will show you how to
+create a Spark
+
+3
+00:00:06,819 --> 00:00:10,490
+application, link and compile it with the
+respective program languages and
+
+4
+00:00:10,490 --> 00:00:16,070
+run the applications on the Spark cluster. The goal of this lab exercise is to show you how
+
+5
+00:00:16,070 --> 00:00:17,810
+to create and run a Spark program.
+
+6
+00:00:17,810 --> 00:00:21,840
+That is not to focus on how to program
+in Scala or Python, 
+
+7
+00:00:21,840 --> 00:00:26,390
+or even Java. The business logic up the
+application can be anything you need for
+
+8
+00:00:26,390 --> 00:00:28,019
+your particular application.
+
+9
+00:00:28,019 --> 00:00:33,410
+Before you get started, you are going to have to set up the VM
+
+10
+00:00:33,410 --> 00:00:38,910
+with the appropriate build tools. You can,
+of course, use any build tools you prefer.
+
+11
+00:00:38,910 --> 00:00:44,059
+This is just the one that I've selected
+to use. I went ahead and downloaded
+
+12
+00:00:44,059 --> 00:00:48,879
+the Scala SBT in order to package
+Scala applications.
+
+13
+00:00:48,879 --> 00:00:53,160
+and then I downloaded and I extracted
+the
+
+14
+00:00:53,160 --> 00:00:56,270
+package under the 
+
+15
+00:00:56,270 --> 00:01:00,840
+/usr/local directory. I also created some
+environmental variables
+
+16
+00:01:00,840 --> 00:01:03,890
+to make sure I can use and run SBT
+
+17
+00:01:03,890 --> 00:01:10,100
+anywhere within the machine. I'm going to show you what it looks like in my
+
+18
+00:01:10,100 --> 00:01:10,790
+.bashrc
+
+19
+00:01:10,790 --> 00:01:14,900
+This is what I created when I downloaded
+SBT package.
+
+20
+00:01:14,900 --> 00:01:18,189
+I put it under the /usr/local directory.
+
+21
+00:01:18,189 --> 00:01:22,659
+I have that all set up. You have to update
+and
+
+22
+00:01:22,659 --> 00:01:26,270
+change the path accordingly to what
+
+23
+00:01:26,270 --> 00:01:27,950
+package name or
+
+24
+00:01:27,950 --> 00:01:33,159
+the package build tools that you download. Back to the terminal
+
+25
+00:01:33,159 --> 00:01:37,740
+you start by creating a Spark application in Scala.
+
+26
+00:01:37,740 --> 00:01:41,170
+The examples are actually available on the image
+
+27
+00:01:41,170 --> 00:01:45,940
+under the examples subfolder of spark or
+you can find it on Spark's website.
+
+28
+00:01:45,940 --> 00:01:50,420
+First thing is create a SparkPi
+directory
+
+29
+00:01:50,420 --> 00:01:57,420
+under your /home/virtuser/. Then
+under this SparkPi directory you had to
+
+30
+00:01:58,009 --> 00:02:00,140
+set up by a typical directory structure
+
+31
+00:02:00,140 --> 00:02:03,240
+for the application using the SBT build tool.
+
+32
+00:02:03,240 --> 00:02:07,440
+So need to make the folders
+
+33
+00:02:07,440 --> 00:02:12,489
+source, main, and scala. You can do this
+
+34
+00:02:12,489 --> 00:02:16,940
+separately on individual lines or you
+can do it on the same line
+
+35
+00:02:16,940 --> 00:02:21,170
+with the command option  -p
+
+36
+00:02:21,170 --> 00:02:25,330
+So that created the three directory structures.
+
+37
+00:02:25,330 --> 00:02:30,900
+Go ahead and change into the
+
+38
+00:02:30,900 --> 00:02:34,070
+scala directory --
+
+39
+00:02:34,070 --> 00:02:37,910
+now just making sure everything's there.
+Go ahead and change into the scala
+
+40
+00:02:37,910 --> 00:02:40,980
+directory. This is where you will create and
+
+41
+00:02:40,980 --> 00:02:47,980
+save your SparkPi.scala class.
+
+42
+00:02:52,849 --> 00:02:56,400
+You can use any form of text editor you wish. I'm going to straight on the 
+
+43
+00:02:56,400 --> 00:02:57,010
+command
+
+44
+00:02:57,010 --> 00:03:00,129
+terminal. Copy and paste
+
+45
+00:03:00,129 --> 00:03:03,250
+the entire content for the code from the
+lab exercise
+
+46
+00:03:03,250 --> 00:03:09,480
+doc into the terminal. We're going to go
+each of these lines individually but
+
+47
+00:03:09,480 --> 00:03:12,650
+just go ahead and quit out of that cat by 
+
+48
+00:03:12,650 --> 00:03:18,019
+going CTRL+D and that will save the file.
+
+49
+00:03:18,019 --> 00:03:22,989
+Let's explain a little bit about each of the lines. Go ahead and print out this file,
+
+50
+00:03:22,989 --> 00:03:29,829
+SparkPi.scala. First two lines
+are just import statements
+
+51
+00:03:29,829 --> 00:03:33,310
+necessary to run a Spark application.
+
+52
+00:03:33,310 --> 00:03:37,639
+We also have a math library in there because we're going to do some math functions to
+
+53
+00:03:37,639 --> 00:03:38,590
+compute pie.
+
+54
+00:03:38,590 --> 00:03:45,019
+Of course, you are going to need the Spark package. Then everything else
+
+55
+00:03:45,019 --> 00:03:49,019
+is setting it up. You are going to have to create a Spark configuration object.
+
+56
+00:03:49,019 --> 00:03:52,150
+I gave it an an application name
+
+57
+00:03:52,150 --> 00:03:55,719
+of SparkPi. You will pass that
+
+58
+00:03:55,719 --> 00:03:59,129
+Spark configuration object to the Spark Context
+
+59
+00:03:59,129 --> 00:04:02,959
+so you have to create the Spark Context.
+
+60
+00:04:02,959 --> 00:04:09,959
+Th next few lines of codes are the business logic required to calculate pi
+
+61
+00:04:15,640 --> 00:04:18,949
+and finally you print now the
+calculation of Pi
+
+62
+00:04:18,949 --> 00:04:23,090
+onto the console and you have to be sure
+to stop the spark context
+
+63
+00:04:23,090 --> 00:04:26,150
+As opposed to
+
+64
+00:04:26,150 --> 00:04:30,550
+using a terminal, an application you need
+define the Spark Context and also
+
+65
+00:04:30,550 --> 00:04:31,180
+stop it.
+
+66
+00:04:31,180 --> 00:04:34,520
+The terminal you can get this Spark Context automatically and
+
+67
+00:04:34,520 --> 00:04:41,520
+they will end when you close that shell. At this point, 
+
+68
+00:04:41,539 --> 00:04:44,560
+you have to create some dependencies
+
+69
+00:04:44,560 --> 00:04:47,590
+for spark so
+
+70
+00:04:47,590 --> 00:04:52,750
+go to the root of the SparkPi 
+directory and create a file called
+
+71
+00:04:52,750 --> 00:04:58,349
+sparkpi.sbt. Inside this sparkpi file,
+
+72
+00:04:58,349 --> 00:05:02,919
+copy and paste the lines for the dependencies into it.
+
+73
+00:05:02,919 --> 00:05:06,490
+If you are using a different library,  
+
+74
+00:05:06,490 --> 00:05:10,599
+then change to version accordingly. So now your directory should look like this. 
+
+75
+00:05:10,599 --> 00:05:14,690
+sparkpi.sbt on top, on the root directory
+
+76
+00:05:14,690 --> 00:05:17,960
+and then to package just call command
+sbt package
+
+77
+00:05:17,960 --> 00:05:21,240
+This is gonna run through and
+
+78
+00:05:21,240 --> 00:05:24,520
+package up this simple
+
+79
+00:05:24,520 --> 00:05:29,120
+SparkPi application. Initially when you run
+this is gonna take a while
+
+80
+00:05:29,120 --> 00:05:33,340
+because it has to download all the
+necessary dependencies. I'm not gonna make
+
+81
+00:05:33,340 --> 00:05:34,169
+you sit through
+
+82
+00:05:34,169 --> 00:05:37,610
+this entire process unless you actually
+doing it yourself but
+
+83
+00:05:37,610 --> 00:05:41,110
+for the purpose of this video I'm going
+to speed up and
+
+84
+00:05:41,110 --> 00:05:48,110
+bring it to the end.
+
+85
+00:05:56,010 --> 00:05:58,720
+So it finished packaging the file. 
+
+86
+00:05:58,720 --> 00:06:04,100
+In order to run the application, you are going to use the spark-submit script,
+
+87
+00:06:04,170 --> 00:06:08,120
+ which is located under $SPARK_HOME/bin
+
+88
+00:06:08,120 --> 00:06:11,160
+We're going to pass in some parameters as well.
+
+89
+00:06:11,160 --> 00:06:16,100
+We went ahead and ran it. 
+
+90
+00:06:16,100 --> 00:06:19,110
+Don't worry, I'm going to go back up and explain
+
+91
+00:06:19,110 --> 00:06:26,110
+some of the parameters that we used.
+So the application completed running,
+
+92
+00:06:26,620 --> 00:06:33,620
+and going all the way back up.
+
+93
+00:06:34,310 --> 00:06:40,600
+Obviously this is a script right here. spark_submit. and then the class name is SparkPi
+
+94
+00:06:40,660 --> 00:06:44,820
+and then you tell it which
+
+95
+00:06:44,820 --> 00:06:49,510
+is the master node. In our case is going
+to be the local node running with 4
+
+96
+00:06:49,510 --> 00:06:55,800
+cores. You need a minimum of two cores for parallelism. Then you provide the path to the 
+
+97
+00:06:55,800 --> 00:06:59,970
+jar file. You'll notice some errors here.
+
+98
+00:06:59,970 --> 00:07:03,230
+Don't worry about, it's not critical
+
+99
+00:07:03,230 --> 00:07:06,740
+to the application. The application ran and successfully completed.
+
+100
+00:07:06,740 --> 00:07:10,430
+and now we need to look through this output here
+
+101
+00:07:10,430 --> 00:07:15,440
+to see what output came out. Here it
+shows that Pi is roughly 3.13.
+
+102
+00:07:15,440 --> 00:07:19,590
+and obviously every time you run it
+would be slightly different based on the
+
+103
+00:07:19,590 --> 00:07:20,600
+mathematical
+
+104
+00:07:20,600 --> 00:07:24,900
+computations, but again the purpose was
+to show you how you can create
+
+105
+00:07:24,900 --> 00:07:27,900
+and run Spark applications
+
+106
+00:07:27,900 --> 00:07:28,980
+using Scala.
+

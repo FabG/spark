@@ -1,0 +1,120 @@
+1
+00:00:02,050 --> 00:00:08,040
+Here is a really short overview of the machine
+learning library. The MLlib library contains
+
+2
+00:00:08,040 --> 00:00:13,580
+algorithms and utilities for classification,
+regression, clustering, collaborative filtering
+
+3
+00:00:13,580 --> 00:00:19,869
+and dimensionality reduction. Essentially,
+you would use this for specific machine learning
+
+4
+00:00:19,869 --> 00:00:26,179
+use cases that requires these algorithms.
+In the lab exercise, you will use the clustering
+
+5
+00:00:26,179 --> 00:00:31,140
+K-Means algorithm on a set of taxi drop off
+points to figure out potentially where the
+
+6
+00:00:31,140 --> 00:00:37,000
+best place to hail a cab would be.
+
+7
+00:00:37,000 --> 00:00:42,510
+The GraphX is another library that sits on
+top of the Spark Core. It is basically a graph
+
+8
+00:00:42,510 --> 00:00:48,010
+processing library which can used for social
+networks and language modeling. Graph data
+
+9
+00:00:48,010 --> 00:00:52,230
+and the requirement for graph parallel systems
+is becoming more common, which is why the
+
+10
+00:00:52,230 --> 00:00:57,989
+GraphX library was developed. Specific scenarios
+would not be efficient if it is processed
+
+11
+00:00:57,989 --> 00:01:03,339
+using the data-parallel model. A need for
+the graph-parallel model is introduced with
+
+12
+00:01:03,339 --> 00:01:09,050
+new graph-parallel systems like Giraph and
+GraphLab to efficiently execute graph algorithms
+
+13
+00:01:09,050 --> 00:01:13,840
+much faster than general data-parallel systems.
+
+14
+00:01:13,840 --> 00:01:17,790
+There are new inherent challenges that comes
+with graph computations, such as constructing
+
+15
+00:01:17,790 --> 00:01:24,330
+the graph, modifying its structure, or expressing
+computations that span several graphs. As
+
+16
+00:01:24,330 --> 00:01:29,740
+such, it is often necessary to move between
+table and graph views depending on the objective
+
+17
+00:01:29,740 --> 00:01:33,890
+of the application and the business requirements.
+
+18
+00:01:33,890 --> 00:01:39,390
+The goal of GraphX is to optimize the process
+by making it easier to view data both as a
+
+19
+00:01:39,390 --> 00:01:46,290
+graph and as collections, such as RDD, without
+data movement or duplication.
+
+20
+00:01:46,290 --> 00:01:50,740
+The lab exercise goes through an example of
+loading in a text file and creating a graph
+
+21
+00:01:50,740 --> 00:01:56,270
+from it to find attributes of the top users.
+
+22
+00:01:56,270 --> 00:02:00,210
+Having completed this lesson, you should be
+able to understand and use the various Spark
+
+23
+00:02:00,210 --> 00:02:05,410
+libraries.
+
+24
+00:02:05,410 --> 00:02:11,170
+Complete lab exercise #4, creating applications
+using Spark SQL, MLib, Spark Streaming, and
+
+25
+00:02:11,170 --> 00:02:14,310
+GraphX and then proceed to the next lesson
+in this course.
+

@@ -1,0 +1,278 @@
+1
+00:00:00,820 --> 00:00:02,979
+Here we have a picture of the Spark unified
+
+2
+00:00:02,979 --> 00:00:08,980
+stack. As you can see, the Spark core is at
+the center of it all. The Spark core is a
+
+3
+00:00:08,980 --> 00:00:14,150
+general-purpose system providing scheduling,
+distributing, and monitoring of the applications
+
+4
+00:00:14,150 --> 00:00:20,779
+across a cluster. Then you have the components
+on top of the core that are designed to interoperate
+
+5
+00:00:20,779 --> 00:00:26,210
+closely, letting the users combine them, just
+like they would any libraries in a software
+
+6
+00:00:26,210 --> 00:00:31,529
+project. The benefit of such a stack is that
+all the higher layer components will inherit
+
+7
+00:00:31,529 --> 00:00:37,370
+the improvements made at the lower layers.
+Example: Optimization to the Spark Core will
+
+8
+00:00:37,370 --> 00:00:42,140
+speed up the SQL, the streaming, the machine
+learning and the graph processing libraries
+
+9
+00:00:42,140 --> 00:00:48,559
+as well. The Spark core is designed to scale
+up from one to thousands of nodes. It can
+
+10
+00:00:48,559 --> 00:00:54,809
+run over a variety of cluster managers including
+Hadoop YARN and Apache Mesos. Or simply, it
+
+11
+00:00:54,809 --> 00:01:00,179
+can even run as a standalone with its own
+built-in scheduler.
+
+12
+00:01:00,179 --> 00:01:05,610
+Spark SQL is designed to work with the Spark
+via SQL and HiveQL (a Hive variant of SQL).
+
+13
+00:01:05,610 --> 00:01:12,140
+Spark SQL allows developers to intermix SQL
+with Spark's programming language supported
+
+14
+00:01:12,140 --> 00:01:17,210
+by Python, Scala, and Java.
+
+15
+00:01:17,210 --> 00:01:22,670
+Spark Streaming provides processing of live
+streams of data. The Spark Streaming API closely
+
+16
+00:01:22,670 --> 00:01:28,490
+matches that of the Sparks Core's API, making
+it easy for developers to move between applications
+
+17
+00:01:28,490 --> 00:01:34,640
+that processes data stored in memory vs arriving
+in real-time. It also provides the same degree
+
+18
+00:01:34,640 --> 00:01:41,360
+of fault tolerance, throughput, and scalability
+that the Spark Core provides.
+
+19
+00:01:41,360 --> 00:01:45,950
+Machine learning, MLlib is the machine learning
+library that provides multiple types of machine
+
+20
+00:01:45,950 --> 00:01:52,560
+learning algorithms. All of these algorithms
+are designed to scale out across the cluster
+
+21
+00:01:52,560 --> 00:01:54,430
+as well.
+
+22
+00:01:54,430 --> 00:02:00,439
+GraphX is a graph processing library with
+APIs to manipulate graphs and performing graph-parallel
+
+23
+00:02:00,439 --> 00:02:01,079
+computations.
+
+24
+00:02:01,079 --> 00:02:05,759
+Here's a brief history of Spark. I'm not
+
+25
+00:02:05,759 --> 00:02:09,690
+going to spend too much time on this as you
+can easily find more information for yourself
+
+26
+00:02:09,690 --> 00:02:14,640
+if you are interested. Basically, you can
+see that MapReduce started out over a decade
+
+27
+00:02:14,640 --> 00:02:21,200
+ago. MapReduce was designed as a fault tolerant
+framework that ran on commodity systems. Spark
+
+28
+00:02:21,200 --> 00:02:25,250
+comes out about a decade later with the similar
+framework to run data processing on commodity
+
+29
+00:02:25,250 --> 00:02:31,880
+systems also using a fault tolerant framework.
+MapReduce started off as a general batch processing
+
+30
+00:02:31,880 --> 00:02:37,880
+system, but there are two major limitations.
+1) Difficulty in programming directly in MR
+
+31
+00:02:37,880 --> 00:02:43,580
+and 2) Batch jobs do not fit many use cases.
+So this spawned specialized systems to handle
+
+32
+00:02:43,580 --> 00:02:48,490
+other use cases. When you try to combine these
+third party systems in your applications,
+
+33
+00:02:48,490 --> 00:02:50,950
+there are a lot of overhead.
+
+34
+00:02:50,950 --> 00:02:55,500
+Taking a looking at the code size of some
+applications on the graph on this slide, you
+
+35
+00:02:55,500 --> 00:03:01,760
+can see that Spark requires a considerable
+amount less. Even with Spark's libraries,
+
+36
+00:03:01,760 --> 00:03:06,170
+it only adds a small amount of code due to
+how tightly everything is integrated with
+
+37
+00:03:06,170 --> 00:03:10,290
+very little overhead. There is great value
+to be able to express a wide variety of use
+
+38
+00:03:10,290 --> 00:03:12,830
+cases with few lines of code.
+
+39
+00:03:12,830 --> 00:03:17,030
+Now let's get into the core of Spark. Spark's
+
+40
+00:03:17,030 --> 00:03:23,320
+primary core abstraction is called Resilient
+Distributed Dataset or RDD. Essentially it
+
+41
+00:03:23,320 --> 00:03:28,420
+is just a distributed collection of elements
+that is parallelized across the cluster. You
+
+42
+00:03:28,420 --> 00:03:35,200
+can have two types of RDD operations. Transformations
+and Actions. Transformations are those that
+
+43
+00:03:35,200 --> 00:03:41,100
+do not return a value. In fact, nothing is
+evaluated during the definition of these transformation
+
+44
+00:03:41,100 --> 00:03:46,700
+statements. Spark just creates these Direct
+Acyclic Graphs or DAG, which will only be
+
+45
+00:03:46,700 --> 00:03:51,900
+evaluated at runtime. We call this lazy evaluation.
+
+46
+00:03:51,900 --> 00:03:57,210
+The fault tolerance aspect of RDDs allows
+Spark to reconstruct the transformations used
+
+47
+00:03:57,210 --> 00:04:02,610
+to build the lineage to get back the lost
+data.
+
+48
+00:04:02,610 --> 00:04:06,920
+Actions are when the transformations get evaluted
+along with the action that is called for that
+
+49
+00:04:06,920 --> 00:04:13,200
+RDD. Actions return values. For example, you
+can do a count on a RDD, to get the number
+
+50
+00:04:13,200 --> 00:04:17,320
+of elements within and that value is returned.
+
+51
+00:04:17,320 --> 00:04:22,730
+So you have an image of a base RDD shown here
+on the slide. The first step is loading the
+
+52
+00:04:22,730 --> 00:04:29,050
+dataset from Hadoop. Then uou apply successive
+transformations on it such as filter, map,
+
+53
+00:04:29,050 --> 00:04:34,620
+or reduce. Nothing actually happens until
+an action is called. The DAG is just updated
+
+54
+00:04:34,620 --> 00:04:39,050
+each time until an action is called. This
+provides fault tolerance. For example, let's
+
+55
+00:04:39,050 --> 00:04:43,480
+say a node goes offline. All it needs to do
+when it comes back online is to re-evaluate
+
+56
+00:04:43,480 --> 00:04:45,970
+the graph to where it left off.
+
+57
+00:04:45,970 --> 00:04:50,630
+Caching is provided with Spark to enable the
+processing to happen in memory. If it does
+
+58
+00:04:50,630 --> 00:04:52,600
+not fit in memory, it will spill to disk.
+

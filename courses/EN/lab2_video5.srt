@@ -1,0 +1,455 @@
+1
+00:00:00,960 --> 00:00:03,210
+In this section, you'll be 
+
+2
+00:00:03,210 --> 00:00:06,620
+creating a sample application using
+Scala.
+
+3
+00:00:06,620 --> 00:00:09,950
+You are going to be using a subset all the data for taxi trips
+
+4
+00:00:09,950 --> 00:00:13,049
+that will determine the top 10 medallion
+numbers
+
+5
+00:00:13,049 --> 00:00:16,529
+based on the number of trips. I'm just cleaning up and closing all the windows
+
+6
+00:00:16,529 --> 00:00:17,039
+now.
+
+7
+00:00:17,039 --> 00:00:20,080
+and you can start a new one.
+
+8
+00:00:20,080 --> 00:00:23,590
+So for this exercise you are going to have to load
+
+9
+00:00:23,590 --> 00:00:26,900
+two additional taxi data into the
+HDFS.
+
+10
+00:00:26,900 --> 00:00:32,279
+and it will be under the /tmp directory
+so let's go ahead in create
+
+11
+00:00:32,279 --> 00:00:36,989
+two additional directories. So I am creating a
+
+12
+00:00:36,989 --> 00:00:43,989
+lab data directory, under the /tmp, I'm
+going to create a
+
+13
+00:00:44,210 --> 00:00:47,370
+sparkdata directory under that labdata
+directory
+
+14
+00:00:47,370 --> 00:00:51,809
+You can, of course, chain this together
+into one command, but I wanted to show you
+
+15
+00:00:51,809 --> 00:00:56,160
+separately. Now you are going to upload
+
+16
+00:00:56,160 --> 00:00:59,210
+3 CSV file under the sparkdata
+
+17
+00:00:59,210 --> 00:01:02,579
+directory namely nyctaxi.csv
+
+18
+00:01:02,579 --> 00:01:06,240
+nyctaxisub.csv
+
+19
+00:01:06,240 --> 00:01:09,920
+and the nycweather.scv. We're going to use three hadoop
+
+20
+00:01:09,920 --> 00:01:13,600
+commands to put the files on the
+
+21
+00:01:13,600 --> 00:01:20,560
+HDFS under the sparkdata directory. So
+the taxi data
+
+22
+00:01:20,560 --> 00:01:25,250
+is actually some taxi information from New York
+
+23
+00:01:25,250 --> 00:01:29,380
+and that data is going to get loaded onto
+the HDFS. It is going to take a while
+
+24
+00:01:29,380 --> 00:01:36,380
+The file is actually quite big.
+
+25
+00:01:57,360 --> 00:02:01,440
+We're going to load in the taxisub
+data. This is a subset
+
+26
+00:02:01,440 --> 00:02:04,670
+of the original one so we're going to
+use original one
+
+27
+00:02:04,670 --> 00:02:08,539
+for this particular application and then
+the other two will be used
+
+28
+00:02:08,539 --> 00:02:12,060
+for a later exercise but we're just loading all three of them now.
+
+29
+00:02:12,060 --> 00:02:15,770
+and then finally the nycweather.
+
+30
+00:02:15,770 --> 00:02:21,660
+Let's make sure that all the files were
+successfully loaded.
+
+31
+00:02:21,660 --> 00:02:28,660
+Do a listing on the sparkdata directory.
+alright everything look okay
+
+32
+00:02:29,959 --> 00:02:36,959
+Let's start up the Spark shell.
+
+33
+00:02:46,629 --> 00:02:49,819
+The first thing you are going to do is create the RDD
+
+34
+00:02:49,819 --> 00:02:55,290
+of the NYC taxi file. Everything
+
+35
+00:02:55,290 --> 00:03:02,290
+we do in Spark is going to consist of an RDD. If you wanted to,
+
+36
+00:03:03,540 --> 00:03:06,549
+you can take a look at the first five rows of content. 
+
+37
+00:03:06,549 --> 00:03:11,250
+Use the take(5) method and print it to the console.
+
+38
+00:03:11,250 --> 00:03:14,639
+Essentially
+
+39
+00:03:14,639 --> 00:03:18,629
+once you print it out you are going to see the header columns
+
+40
+00:03:18,629 --> 00:03:21,889
+and the data after the
+
+41
+00:03:21,889 --> 00:03:26,500
+header so there's information like the medallion, the passenger count,
+
+42
+00:03:26,500 --> 00:03:30,659
+pick-up date/time, pick-up location
+latitude/longitude.
+
+43
+00:03:30,659 --> 00:03:33,730
+Typically, 
+
+44
+00:03:33,730 --> 00:03:37,489
+we will want to remove the header from the file, but because the operation
+
+45
+00:03:37,489 --> 00:03:40,919
+that we're going to be doing won't get affected by the header,
+
+46
+00:03:40,919 --> 00:03:45,939
+we're going to leave it in there -- it's not a
+big deal. Also,
+
+47
+00:03:45,939 --> 00:03:49,069
+when you load in some type of input file,
+
+48
+00:03:49,069 --> 00:03:52,359
+you are going to want to
+
+49
+00:03:52,359 --> 00:03:55,540
+-- it's going to through each of these different columns here
+
+50
+00:03:55,540 --> 00:03:59,609
+With this information,
+
+51
+00:03:59,609 --> 00:04:03,449
+you can determine the medallion number
+
+52
+00:04:03,449 --> 00:04:06,919
+and the number based on a number
+trips --
+
+53
+00:04:06,919 --> 00:04:10,780
+the top 10 medallion numbers based on the number trips. That's what we're going to find out here in
+
+54
+00:04:10,780 --> 00:04:17,220
+this lab exercise.
+
+55
+00:04:17,650 --> 00:04:22,840
+So now you going to parse the information up. Split it up by
+
+56
+00:04:22,840 --> 00:04:28,690
+commas. That is going to be a parsed -- merging up the data so that
+
+57
+00:04:28,690 --> 00:04:34,960
+way we can work with it. Next, you are
+
+58
+00:04:34,960 --> 00:04:38,389
+going to want to create some key/value
+pairs from the
+
+59
+00:04:38,389 --> 00:04:42,280
+data with the key is the medallion and the value is one. 
+
+60
+00:04:42,280 --> 00:04:45,330
+So we are going to use this model to alter sum up 
+
+61
+00:04:45,330 --> 00:04:48,550
+all the keys to find a number trips a
+particular
+
+62
+00:04:48,550 --> 00:04:52,750
+taxi took and in particular we will be
+able to see which taxi
+
+63
+00:04:52,750 --> 00:04:58,940
+took the most trips. Here we are.
+
+64
+00:04:58,940 --> 00:05:02,880
+We are going to parse it up further to get out the key
+
+65
+00:05:02,880 --> 00:05:06,330
+and val(6) is the medallion
+
+66
+00:05:06,330 --> 00:05:10,630
+number and val(1) corresponds to the
+
+67
+00:05:10,630 --> 00:05:15,570
+the value basically mapping
+
+68
+00:05:15,570 --> 00:05:18,750
+the key to the value of 1.
+
+69
+00:05:18,750 --> 00:05:22,229
+Next we're going do the reduceByKey
+
+70
+00:05:22,229 --> 00:05:25,770
+function and that is going to add up all the
+keys for a particular
+
+71
+00:05:25,770 --> 00:05:32,770
+taxi, so we going to see how many
+times this taxi was recorded.
+
+72
+00:05:41,999 --> 00:05:45,740
+The values are actually swapped
+
+73
+00:05:45,740 --> 00:05:49,830
+when they come out, so we have to reorder them in descending order
+
+74
+00:05:49,830 --> 00:05:53,550
+so that the results can be presented
+correctly so that's what this line here
+
+75
+00:05:53,550 --> 00:05:53,789
+is
+
+76
+00:05:53,789 --> 00:05:58,680
+doing is gonna swap it back around and
+you're going to get the top 10 of it
+
+77
+00:05:58,680 --> 00:06:03,610
+and then have it printed out to the console with the formatting here
+
+78
+00:06:03,610 --> 00:06:07,449
+so you see in a second what that looks
+like once it comes up.
+
+79
+00:06:11,990 --> 00:06:15,469
+so you can see the different medallions,  the number
+
+80
+00:06:15,469 --> 00:06:18,919
+and the number of trips they took and we
+were
+
+81
+00:06:18,919 --> 00:06:22,439
+able to sort it by the top 10 so this
+medallion
+
+82
+00:06:22,439 --> 00:06:27,240
+at the top had 415 trips the second one had 411 trips,
+
+83
+00:06:27,240 --> 00:06:33,419
+so on and so forth and the other steps
+above we did,
+
+84
+00:06:33,419 --> 00:06:36,550
+we did on separate lines. You can
+obviously chain everything together
+
+85
+00:06:36,550 --> 00:06:39,689
+and use a shorthand notation so here's
+what I'm showing now
+
+86
+00:06:39,689 --> 00:06:43,909
+putting everything on one line, doing
+the splitting
+
+87
+00:06:43,909 --> 00:06:48,759
+by the comma, the mapping of the medallion keys to one and then reducing by the key.
+
+88
+00:06:48,759 --> 00:06:53,449
+Obviously, in an actual application you
+are going to want to be concise, but for debugging
+
+89
+00:06:53,449 --> 00:06:54,169
+purposes
+
+90
+00:06:54,169 --> 00:06:57,960
+it might be useful to break up the
+individual operations
+
+91
+00:06:57,960 --> 00:07:01,339
+I'm just running the same
+
+92
+00:07:01,339 --> 00:07:06,909
+print statement out on the single line to
+show you that they will produce the same
+
+93
+00:07:06,909 --> 00:07:07,599
+results.
+
+94
+00:07:07,599 --> 00:07:10,830
+You see the values within this
+info
+
+95
+00:07:10,830 --> 00:07:15,639
+printed it here. Scroll up a little bit and you'll see the top -- 
+
+96
+00:07:15,639 --> 00:07:19,439
+actually, it is right there. The 415 trips 
+for the first medallion.
+
+97
+00:07:19,439 --> 00:07:22,779
+Just one line above the 411
+
+98
+00:07:22,779 --> 00:07:27,150
+and that's just due to the printouts of the logs.
+
+99
+00:07:27,150 --> 00:07:29,630
+Went ahead and cached the taxi
+
+100
+00:07:29,630 --> 00:07:34,590
+medallion one-line count. You run
+
+101
+00:07:34,590 --> 00:07:39,520
+the count on it to actually invoke the cache and you can run it again
+
+102
+00:07:39,520 --> 00:07:44,000
+to see that it is indeed faster because
+it ran against the cache
+
+103
+00:07:44,000 --> 00:07:47,160
+but again not by much.  I we had more
+data
+
+104
+00:07:47,160 --> 00:07:48,810
+obviously it will make more of a
+difference.
+

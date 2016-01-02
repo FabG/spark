@@ -1,0 +1,288 @@
+1
+00:00:01,100 --> 00:00:06,649
+Hi. Welcome to the Spark Fundamentals course.
+This lesson will cover Spark configuration,
+
+2
+00:00:06,649 --> 00:00:12,360
+monitoring and tuning.
+
+3
+00:00:12,360 --> 00:00:17,070
+After completing this lesson, you should be
+able describe the cluster overview. Configure
+
+4
+00:00:17,070 --> 00:00:23,170
+Spark by modifying Spark properties, environmental
+variables or logging properties. Monitor Spark
+
+5
+00:00:23,170 --> 00:00:30,119
+and its applications using the Web UIs, metrics
+and various other external tools. Also covered
+
+6
+00:00:30,119 --> 00:00:35,170
+in this lesson would be some performance tuning
+considerations.
+
+7
+00:00:35,170 --> 00:00:40,559
+There are three main components of a Spark
+cluster. You have the driver, where the SparkContext
+
+8
+00:00:40,559 --> 00:00:45,350
+is located within the main program. To run
+on a cluster, you would need some sort of
+
+9
+00:00:45,350 --> 00:00:51,949
+cluster manager. This could be either Spark's
+standalone cluster manager, Mesos or Yarn.
+
+10
+00:00:51,949 --> 00:00:56,940
+Then you have your worker nodes where the
+executor resides. The executors are the processes
+
+11
+00:00:56,940 --> 00:01:03,479
+that run computations and store the data for
+the application. The SparkContext sends the
+
+12
+00:01:03,479 --> 00:01:09,420
+application, defined as JAR or Python files
+to each executor. Finally, it sends the tasks
+
+13
+00:01:09,420 --> 00:01:12,990
+for each executor to run.
+
+14
+00:01:12,990 --> 00:01:19,380
+Several things to understand about this architecture.
+Each application gets its own executor. The
+
+15
+00:01:19,380 --> 00:01:25,539
+executor stays up for the entire duration
+of the application. The benefit of this is
+
+16
+00:01:25,539 --> 00:01:30,229
+that the applications are isolated from each
+other, on the scheduling side and running
+
+17
+00:01:30,229 --> 00:01:36,710
+on different JVMs. However, this means that
+you cannot share data across applications.
+
+18
+00:01:36,710 --> 00:01:40,520
+You would need to externalize the data if
+you wish to share data between thedifferent
+
+19
+00:01:40,520 --> 00:01:42,109
+applications.
+
+20
+00:01:42,109 --> 00:01:47,909
+Spark applications don't care about the underlying
+cluster manager. As long as it can acquire
+
+21
+00:01:47,909 --> 00:01:53,240
+executors and communicate with each other,
+it can run on any cluster manager.
+
+22
+00:01:53,240 --> 00:01:57,299
+Because the driver program schedules tasks
+on the cluster, it should run close to the
+
+23
+00:01:57,299 --> 00:02:02,149
+worker nodes on the same local network. If
+you like to send remote requests to the cluster,
+
+24
+00:02:02,149 --> 00:02:08,179
+it is better to use a RPC and have it submit
+operations from nearby.
+
+25
+00:02:08,179 --> 00:02:12,430
+There are currently three supported cluster
+managers that we have mentioned before. Sparks
+
+26
+00:02:12,430 --> 00:02:16,930
+comes with a standalone manager that you can
+use to get up and running. You can use Apache
+
+27
+00:02:16,930 --> 00:02:22,040
+Mesos, a general cluster manager that can
+run and service Hadoop jobs. Finally, you
+
+28
+00:02:22,040 --> 00:02:27,780
+can also use Hadoop YARN, the resource manager
+in Hadoop 2. In the lab exercise, you will
+
+29
+00:02:27,780 --> 00:02:33,470
+be using BigInsights with Yarn to run your
+Spark applications.
+
+30
+00:02:33,470 --> 00:02:38,550
+Spark configuration.
+There are three main locations for Spark configuration.
+
+31
+00:02:38,550 --> 00:02:43,340
+You have the Spark properties, where the application
+parameters can be set using the SparkConf
+
+32
+00:02:43,340 --> 00:02:47,910
+object or through Java system properties.
+
+33
+00:02:47,910 --> 00:02:51,930
+Then you have the environment variables, which
+can be used to set per machine settings such
+
+34
+00:02:51,930 --> 00:02:58,030
+as IP address. This is done through the conf/spark-env.sh
+script on each node.
+
+35
+00:02:58,030 --> 00:03:03,680
+Finally, you also have your logging properties,
+which can be configured through log4j.properties.
+
+36
+00:03:03,680 --> 00:03:10,680
+You can choose to override the default configuration
+directory, which is currently under the SPARK_HOME/conf
+
+37
+00:03:12,160 --> 00:03:17,380
+directory. Set the SPARK_CONF_DIR environment
+variable and provide your custom configuration
+
+38
+00:03:17,380 --> 00:03:20,870
+files under that directory.
+
+39
+00:03:20,870 --> 00:03:26,090
+In the lab exercise, the Spark shell can be
+verbose, so if you wish, change it from INFO
+
+40
+00:03:26,090 --> 00:03:33,090
+to ERROR in the log4j.properties to reduce
+all the information being printed on the console.
+
+41
+00:03:34,640 --> 00:03:40,100
+There are two methods of setting Spark properties.
+The first method is by passing application
+
+42
+00:03:40,100 --> 00:03:46,230
+properties via the SparkConf object. As you
+know, the SparkConf variable is used to create
+
+43
+00:03:46,230 --> 00:03:52,080
+the SparkContext object. In the example shown
+on this slide, you set the master node as
+
+44
+00:03:52,080 --> 00:03:59,080
+local, the appName as "CountingSheep", and
+you allow 1GB for each of the executor processes.
+
+45
+00:04:00,060 --> 00:04:05,010
+The second method is to dynamically set the
+Spark properties. Spark allows you to pass
+
+46
+00:04:05,010 --> 00:04:11,020
+in an empty SparkConf when creating the SparkContext
+as shown on the slide.
+
+47
+00:04:11,020 --> 00:04:18,020
+You can then either supply the values during
+runtime by using the command line options
+
+48
+00:04:18,290 --> 00:04:24,530
+--master or the --conf. You can see the list
+of options using the --help when executing
+
+49
+00:04:24,530 --> 00:04:29,150
+the spark-submit script.
+On the slide here, you give the app name of
+
+50
+00:04:29,150 --> 00:04:36,150
+My App and telling it to run on the local
+system with four cores. You set the spark.shuffle.spill
+
+51
+00:04:36,240 --> 00:04:41,820
+to false and the various java options at the
+end. Finally you supply the application JAR
+
+52
+00:04:41,820 --> 00:04:46,000
+file after all the properties have been specified.
+
+53
+00:04:46,000 --> 00:04:50,490
+You can find a list of all the properties
+on the spark.apache.org website.
+
+54
+00:04:50,490 --> 00:04:55,260
+Another way to set Spark properties is to
+provide your settings inside the spark-defaults.conf
+
+55
+00:04:55,260 --> 00:05:01,030
+file. The spark-submit script will read in
+the configurations from this file. You can
+
+56
+00:05:01,030 --> 00:05:08,030
+view the Spark properties on the application
+web UI at the port 4040 by default.
+
+57
+00:05:09,030 --> 00:05:15,710
+One thing I'll add is that properties set
+directly on the SparkConf take highest precedence,
+
+58
+00:05:15,710 --> 00:05:22,710
+then flags passed to spark-submit or spark-shell
+is second and finally options in the spark-defaults.conf
+
+59
+00:05:23,130 --> 00:05:24,820
+file is the lowest priority.
+

@@ -1,0 +1,294 @@
+1
+00:00:01,170 --> 00:00:06,190
+In the next three slides, you will see another
+example of creating a Spark application. First
+
+2
+00:00:06,190 --> 00:00:10,610
+you will see how to do this in Scala. The
+next following sets of slides will show Python
+
+3
+00:00:10,610 --> 00:00:12,650
+and Java.
+
+4
+00:00:12,650 --> 00:00:17,039
+The application shown here counts the number
+of lines with 'a' and the number of lines
+
+5
+00:00:17,039 --> 00:00:22,850
+with 'b'. You will need to replace the YOUR_SPARK_HOME
+with the directory where Spark is installed,
+
+6
+00:00:22,850 --> 00:00:26,609
+if you wish to code this application.
+
+7
+00:00:26,609 --> 00:00:31,760
+Unlike the Spark shell, you have to initialize
+the SparkContext in a program. First you must
+
+8
+00:00:31,760 --> 00:00:37,109
+create a SparkConf to set up your application's
+name. Then you create the SparkContext by
+
+9
+00:00:37,109 --> 00:00:43,249
+passing in the SparkConf object. Next, you
+create the RDD by loading in the textFile,
+
+10
+00:00:43,249 --> 00:00:49,649
+and then caching the RDD. Since we will be
+applying a couple of transformations on it,
+
+11
+00:00:49,649 --> 00:00:56,649
+caching will help speed up the process, especially
+if the logData RDD is large. Finally, you
+
+12
+00:00:56,879 --> 00:01:02,429
+get the values of the RDD by executing the
+count action on it. End the program by printing
+
+13
+00:01:02,429 --> 00:01:05,939
+it out onto the console.
+
+14
+00:01:05,939 --> 00:01:10,119
+In Python, this application does the exact
+same thing, that is, count the number of lines
+
+15
+00:01:10,119 --> 00:01:15,159
+with 'a' in it, and the number of lines with
+'b' in it. You use a SparkContext object to
+
+16
+00:01:15,159 --> 00:01:19,700
+create the RDDs and cache it. Then you run
+the transformations and actions, follow by
+
+17
+00:01:19,700 --> 00:01:26,700
+a print to the console. Nothing entirely new
+here, just a difference in syntax.
+
+18
+00:01:29,000 --> 00:01:36,000
+Similar to Scala and Python, in Java you need
+to get a JavaSparkContext. RDDs are represented
+
+19
+00:01:36,950 --> 00:01:43,950
+by JavaRDD. Then you run the transformations
+and actions on them. The lambda expressions
+
+20
+00:01:43,999 --> 00:01:49,270
+of Java 8 allows you to concisely write functions.
+Otherwise, you can use the classes in the
+
+21
+00:01:49,270 --> 00:01:56,240
+org.apache.spark.api.java.function package
+for older versions of java. The business logic
+
+22
+00:01:56,240 --> 00:02:00,990
+is the same as the previous two examples to
+count the number of a's and b's from the Readme
+
+23
+00:02:00,990 --> 00:02:07,990
+file. Just a matter of difference in the syntax
+and library names.
+
+24
+00:02:09,119 --> 00:02:13,310
+Up until this point, you should know how to
+create a Spark application using any of the
+
+25
+00:02:13,310 --> 00:02:19,769
+supported programming languages. Now you get
+to see how to run the application. You will
+
+26
+00:02:19,769 --> 00:02:25,510
+need to first define the dependencies. Then
+you have to package the application together
+
+27
+00:02:25,510 --> 00:02:32,510
+using system build tools such as Ant, sbt,
+or Maven. The examples here show how you would
+
+28
+00:02:33,140 --> 00:02:39,250
+do it using the various tools. You can use
+any tool for any of the programming languages.
+
+29
+00:02:39,250 --> 00:02:46,250
+For Scala, the example is shown using sbt,
+so you would have a simple.sbt file. In Java,
+
+30
+00:02:46,650 --> 00:02:53,650
+the example shows using Maven so you would
+have the pom.xml file. In Python, if you need
+
+31
+00:02:53,760 --> 00:02:59,730
+to have dependencies that requires third party
+libraries, then you can use the --py-files
+
+32
+00:02:59,730 --> 00:03:01,829
+argument to handle that.
+
+33
+00:03:01,829 --> 00:03:07,549
+Again, shown here are examples of what a typical
+directory structure would look like for the
+
+34
+00:03:07,549 --> 00:03:10,230
+tool that you choose.
+
+35
+00:03:10,230 --> 00:03:17,159
+Finally, once you have the JAR packaged created,
+run the spark-submit to execute the application.
+
+36
+00:03:17,159 --> 00:03:22,980
+In the lab exercise, you will get to practice
+this.
+
+37
+00:03:22,980 --> 00:03:28,909
+In short, you package up your application
+into a JAR for Scala or Java or a set of .py
+
+38
+00:03:28,909 --> 00:03:32,219
+or .zip files for Python.
+
+39
+00:03:32,219 --> 00:03:37,519
+To submit your application to the Spark cluster,
+you use spark-submit command, which is located
+
+40
+00:03:37,519 --> 00:03:41,819
+under the $SPARK_HOME/bin directory.
+
+41
+00:03:41,819 --> 00:03:47,040
+The options shown on the slide are the commonly
+used options. To see other options, just invoke
+
+42
+00:03:47,040 --> 00:03:50,280
+spark-submit with the help argument.
+
+43
+00:03:50,280 --> 00:03:53,950
+Let's briefly go over what each of these options
+mean.
+
+44
+00:03:53,950 --> 00:03:58,329
+The class option is the main entry point to
+your class. If it is under a package name,
+
+45
+00:03:58,329 --> 00:04:05,129
+you must provide the fully qualified name.
+The master URL is where your cluster is located.
+
+46
+00:04:05,129 --> 00:04:10,170
+Remember that it is recommended approach to
+provide the master URL here, instead of hardcoding
+
+47
+00:04:10,170 --> 00:04:13,480
+it in your application code.
+
+48
+00:04:13,480 --> 00:04:18,410
+The deploy-mode is whether you want to deploy
+your driver on the worker nodes (cluster)
+
+49
+00:04:18,410 --> 00:04:24,780
+or locally as an external client (client).
+The default deploy-mode is client.
+
+50
+00:04:24,780 --> 00:04:31,780
+The conf option is any configuration property
+you wish to set in key=value format.
+
+51
+00:04:31,840 --> 00:04:36,240
+The application jar is the file that you packaged
+up using one of the build tools.
+
+52
+00:04:36,240 --> 00:04:43,240
+Finally, if the application has any arguments,
+you would supply it after the jar file.
+
+53
+00:04:43,410 --> 00:04:49,910
+Here's an actual example of running a Spark
+application locally on 8 cores. The class
+
+54
+00:04:49,910 --> 00:04:56,910
+is the org.apache.spark.examples.SparkPi.
+local[8] is saying to run it locally on 8
+
+55
+00:04:58,390 --> 00:05:04,510
+cores. The examples.jar is located on the
+given path with the argument 100 to be passed
+
+56
+00:05:04,510 --> 00:05:11,260
+into the SparkPi application.
+
+57
+00:05:11,260 --> 00:05:15,850
+Having completed this lesson, you should now
+know how to create a standalone Spark application
+
+58
+00:05:15,850 --> 00:05:21,570
+and run it by submitting it to the Spark Cluster.
+You saw briefly on the different methods on
+
+59
+00:05:21,570 --> 00:05:28,570
+how to pass functions in Spark. All three
+programming languages were shown in this lesson.
+
+60
+00:05:30,440 --> 00:05:35,520
+Next steps. Copmlete lab exercise #3, Creating
+a Spark application and then proceed to the
+
+61
+00:05:35,520 --> 00:05:36,910
+next lesson in this course.
+

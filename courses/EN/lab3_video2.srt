@@ -1,0 +1,144 @@
+1
+00:00:00,960 --> 00:00:05,060
+Now we are going to run an application well create and run an application using Python.
+
+2
+00:00:05,060 --> 00:00:08,429
+Python is actually a bit simpler.
+
+3
+00:00:08,429 --> 00:00:13,070
+You don't need to build up the classes
+unless you have some external library or
+
+4
+00:00:13,070 --> 00:00:13,830
+dependencies.
+
+5
+00:00:13,830 --> 00:00:16,830
+First thing you will do is
+
+6
+00:00:16,830 --> 00:00:23,830
+going to open up the terminal. Then we're going to create the
+
+7
+00:00:25,039 --> 00:00:29,189
+new directory under the virtuer. We are going to call it PythonPi. 
+
+8
+00:00:29,189 --> 00:00:32,820
+Again we're going to calculate the Pi, the value of Pi
+
+9
+00:00:32,820 --> 00:00:39,820
+using Python.
+
+10
+00:00:44,309 --> 00:00:47,870
+Create a PythonPy.py file.
+
+11
+00:00:47,870 --> 00:00:51,040
+Go ahead and paste the code into this
+
+12
+00:00:51,040 --> 00:00:55,980
+terminal. You are going to open it
+
+13
+00:00:55,980 --> 00:00:59,649
+up and then go through the lines -- what each of the 
+
+14
+00:00:59,649 --> 00:01:02,820
+lines mean, but remember this again is just to show you
+
+15
+00:01:02,820 --> 00:01:05,850
+the Spark related stuff. We have to import
+some
+
+16
+00:01:05,850 --> 00:01:10,250
+libraries. Obviously the Spark context 
+
+17
+00:01:10,250 --> 00:01:15,570
+is important. We're creating a Spark context.
+
+18
+00:01:15,570 --> 00:01:18,899
+and this one we provide the application name directly into it. 
+
+19
+00:01:18,899 --> 00:01:22,470
+and then these lines of codes are the business logic
+
+20
+00:01:22,470 --> 00:01:29,470
+required to calculate the value of pi.
+
+21
+00:01:29,470 --> 00:01:34,340
+Then finally we print the value of Pi to the console and then
+
+22
+00:01:34,340 --> 00:01:41,340
+again, we need to stop the Spark context.
+
+23
+00:01:41,610 --> 00:01:44,820
+So to run Python classes, you just
+
+24
+00:01:44,820 --> 00:01:47,860
+invoked the spark-submit script directly.
+
+25
+00:01:47,860 --> 00:01:54,799
+This is done under the $SPARK_HOME/bin directory.
+
+26
+00:01:54,799 --> 00:01:58,200
+You provide the parameter
+
+27
+00:01:58,200 --> 00:02:01,270
+for the local node to use
+
+28
+00:02:01,270 --> 00:02:06,159
+four cores, just like before and then just
+provide
+
+29
+00:02:06,159 --> 00:02:11,170
+the PythonPi file. Scroll back up to
+
+30
+00:02:11,170 --> 00:02:17,170
+show you again this is the output that was calculated using this Python application. 
+
+31
+00:02:17,170 --> 00:02:20,970
+Again you successfully created and
+
+32
+00:02:20,970 --> 00:02:27,970
+ran the file using a spark-submit
+application
+
+33
+00:02:32,560 --> 00:02:35,760
+In this lab exercise, 
+
+34
+00:02:35,760 --> 00:02:40,140
+you should be able to create and run
+
+35
+00:02:40,140 --> 00:02:43,870
+and link with Scala and Python applications.
+

@@ -1,0 +1,332 @@
+1
+00:00:00,729 --> 00:00:03,689
+Welcome to Exercise 2 - Resilient
+Distributed Datasets.
+
+2
+00:00:03,689 --> 00:00:07,310
+In this exercise you going to be able
+to create
+
+3
+00:00:07,310 --> 00:00:12,550
+a RDD from an external data set. You are going to be able to view a direct
+
+4
+00:00:12,550 --> 00:00:16,320
+acyclic graph of an RDD, something
+transformations
+
+5
+00:00:16,320 --> 00:00:22,519
+update when they are executed and you'll be able to work with various RDD operations
+
+6
+00:00:22,519 --> 00:00:25,660
+including some that you have seen
+already in lab one but also
+
+7
+00:00:25,660 --> 00:00:30,230
+new operations you haven't seen yet and
+also you'll get to work with shared
+
+8
+00:00:30,230 --> 00:00:30,900
+variables
+
+9
+00:00:30,900 --> 00:00:35,940
+and key value pairs. So in this lab we're
+going to
+
+10
+00:00:35,940 --> 00:00:41,420
+be working with some log files. We will have to upload these log files
+
+11
+00:00:41,420 --> 00:00:44,750
+into HDFS and we're going to be working with the Spark
+
+12
+00:00:44,750 --> 00:00:49,120
+log files. It actually doesn't matter which
+log files you choose
+
+13
+00:00:49,120 --> 00:00:53,340
+The point here is just to show how
+you can analyze something such as a
+
+14
+00:00:53,340 --> 00:00:54,030
+log file.
+
+15
+00:00:54,030 --> 00:00:58,420
+using Spark. So go ahead and copy and paste
+
+16
+00:00:58,420 --> 00:01:01,420
+the command in to copy a log file
+
+17
+00:01:01,420 --> 00:01:08,420
+into HDFS.
+
+18
+00:01:17,320 --> 00:01:23,360
+Here I get a listing of the log files
+available and I'm just going to choose one. 
+
+19
+00:01:23,360 --> 00:01:26,679
+It doesn't matter which one you pick and
+most likely the ones on your system
+
+20
+00:01:26,679 --> 00:01:30,219
+will be different from the ones I'm
+going to use, but that's not
+
+21
+00:01:30,219 --> 00:01:34,069
+the important point here. So just pick
+whichever one you want we're going to copy
+
+22
+00:01:34,069 --> 00:01:35,310
+into the /tmp directory
+
+23
+00:01:35,310 --> 00:01:39,840
+and we can we going to rename it to the sparkLog.out filename
+
+24
+00:01:39,840 --> 00:01:46,840
+That will make it a lot easier to work with
+the later. Ok, if you want, you can view it 
+
+25
+00:01:46,869 --> 00:01:50,549
+quickly on the HDFS using the
+hadoop fs -ls 
+
+26
+00:01:50,549 --> 00:01:55,069
+command to make sure that it
+is inside the /tmp directory
+
+27
+00:01:55,069 --> 00:01:59,929
+ 
+
+28
+00:01:59,929 --> 00:02:05,610
+sparkLog.out has been copied over. You
+should already have the readme file
+
+29
+00:02:05,610 --> 00:02:06,789
+copied as well.
+
+30
+00:02:06,789 --> 00:02:13,599
+from the first lab exercise. If not, copy
+that one in and then you also need to
+
+31
+00:02:13,599 --> 00:02:14,510
+copy the
+
+32
+00:02:14,510 --> 00:02:19,420
+changes.txt file. This file is actually
+part of the lab files that you
+
+33
+00:02:19,420 --> 00:02:23,269
+you downloaded, so it is under the 
+
+34
+00:02:23,269 --> 00:02:26,569
+/home/virtuser/labfiles directory.
+
+35
+00:02:26,569 --> 00:02:33,569
+I'm going to copy that changes.txt
+
+36
+00:02:34,060 --> 00:02:41,060
+into the /tmp directory as well.
+
+37
+00:02:43,270 --> 00:02:47,070
+So now we have all the files that we are
+going to be using
+
+38
+00:02:47,070 --> 00:02:52,020
+for this lab exercise. I did another
+listing
+
+39
+00:02:52,020 --> 00:02:59,020
+to take a look to make sure I've copied everything in correctly.
+
+40
+00:03:02,010 --> 00:03:06,290
+So now we're going to do some operations in Scala. I'm going to launch
+
+41
+00:03:06,290 --> 00:03:11,590
+the Scala shell. We are going to analyze
+
+42
+00:03:11,590 --> 00:03:15,659
+the log files that we just uploaded.
+First thing to do
+
+43
+00:03:15,659 --> 00:03:20,590
+is to create the RDD. You are going to create the RDD using a log file
+
+44
+00:03:20,590 --> 00:03:24,290
+and in the terminal you have a Spark Context already initialized
+
+45
+00:03:24,290 --> 00:03:28,459
+for you. We are going to call this
+
+46
+00:03:28,459 --> 00:03:35,459
+log file and it is going to point to the sparkLog.out.
+
+47
+00:03:36,050 --> 00:03:39,590
+You've seen the filter operation before
+so let's see it again just to make sure.
+
+48
+00:03:39,590 --> 00:03:43,739
+We are going to filter out all the lines that contain 'info'
+
+49
+00:03:43,739 --> 00:03:47,319
+We're interested in some
+information
+
+50
+00:03:47,319 --> 00:03:50,959
+pertaining to Spark for that particular log file and we are going to filter this out into the
+
+51
+00:03:50,959 --> 00:03:52,049
+info RDD.
+
+52
+00:03:52,049 --> 00:03:55,849
+Let's do a quick count of this info and
+
+53
+00:03:55,849 --> 00:03:59,080
+see how many lines contain the
+
+54
+00:03:59,080 --> 00:04:02,140
+info keyword. In this case they are eight.
+
+55
+00:04:02,140 --> 00:04:07,079
+You know you can
+
+56
+00:04:07,079 --> 00:04:10,500
+chain together RDD operations. You have seen this already as well.
+
+57
+00:04:10,500 --> 00:04:13,560
+We are going to look for the lines that contains Spark
+
+58
+00:04:13,560 --> 00:04:17,810
+and just do a count on it right away. We don't need to create an RDD for it. 
+
+59
+00:04:17,810 --> 00:04:21,620
+Chain everything together, executed it to get the value.
+
+60
+00:04:25,840 --> 00:04:29,990
+Your values will most likely be different obviously because you are using
+
+61
+00:04:29,990 --> 00:04:30,979
+a different log file.
+
+62
+00:04:30,979 --> 00:04:36,160
+You have also seen the collect
+
+63
+00:04:36,160 --> 00:04:40,130
+operation before as well. This collect operation prints out the arrays..
+
+64
+00:04:40,130 --> 00:04:43,970
+So now I want to see, in particular, which lines
+
+65
+00:04:43,970 --> 00:04:50,970
+contains Spark from the log file, so I call
+the collect action.
+
+66
+00:04:52,780 --> 00:04:56,370
+So all this time we've been talking a
+lot about the DAG, the direct
+
+67
+00:04:56,370 --> 00:04:58,800
+acyclic graph. This is the graph that gets
+updated
+
+68
+00:04:58,800 --> 00:05:02,310
+when we invoke transformation on it so
+
+69
+00:05:02,310 --> 00:05:06,280
+this provides fault tolerance. If a node becomes unavailable for some reason
+
+70
+00:05:06,280 --> 00:05:10,910
+and a it is brought backup it just needs to
+borrow the DAG from its neighboring node
+
+71
+00:05:10,910 --> 00:05:14,199
+and it will use that to get back into
+
+72
+00:05:14,199 --> 00:05:18,509
+its original state. To find the DAG,
+
+73
+00:05:18,509 --> 00:05:22,660
+just invoke the toDebugString() operation.This will tell you
+
+74
+00:05:22,660 --> 00:05:26,210
+the path that it took to get to where it is
+now. It started off as a 
+
+75
+00:05:26,210 --> 00:05:30,840
+Hadoop RDD and then we did some map and filter on it, depending on
+
+76
+00:05:30,840 --> 00:05:32,090
+operations that we called.
+

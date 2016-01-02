@@ -1,0 +1,276 @@
+1
+00:00:00,770 --> 00:00:03,929
+So now let's get into the last
+section of this exercise
+
+2
+00:00:03,929 --> 00:00:08,340
+and that is to create a Spark
+application using the GraphX library -- 
+
+3
+00:00:08,340 --> 00:00:12,990
+a graph processing library. Now this one is going to be a short lab exercise
+
+4
+00:00:12,990 --> 00:00:19,900
+but for this exercise you will need to
+copy the users.txt and followers.txt from the local VM to the HDFS 
+
+5
+00:00:23,369 --> 00:00:30,369
+under the virtuser directory. First command here is to copy the users.txt
+
+6
+00:00:31,000 --> 00:00:38,000
+over to the /tmp directory on HDFS -- and the second one is going to copy the followers
+
+7
+00:00:38,110 --> 00:00:41,270
+so the application here is
+
+8
+00:00:41,270 --> 00:00:46,070
+to rank the users based on the
+number of followers they have
+
+9
+00:00:46,070 --> 00:00:49,649
+so we have some sample uses listed and
+also some followers
+
+10
+00:00:49,649 --> 00:00:52,940
+so we're going to use some graph processing library.
+
+11
+00:00:52,940 --> 00:00:56,129
+namely GraphX with Spark to compute this
+
+12
+00:00:56,129 --> 00:01:00,399
+Here I let you take a look at some of the
+sample users
+
+13
+00:01:00,399 --> 00:01:05,820
+and then you can take a look at the
+
+14
+00:01:05,820 --> 00:01:09,580
+followers for those particular users.
+
+15
+00:01:09,580 --> 00:01:13,760
+Now we're going to do a ranking of them using a page
+
+16
+00:01:13,760 --> 00:01:16,850
+rank alrogithm that comes with a
+GraphX
+
+17
+00:01:16,850 --> 00:01:21,939
+library. There are additional libraries to use. Again this is just a sample
+
+18
+00:01:21,939 --> 00:01:22,979
+application
+
+19
+00:01:22,979 --> 00:01:27,369
+to show you how you will utilize a
+library from the GraphX.
+
+20
+00:01:27,369 --> 00:01:31,909
+We're going to start up a Spark shell.
+
+21
+00:01:31,909 --> 00:01:36,619
+Obviously if you're writing a production
+application you going to
+
+22
+00:01:36,619 --> 00:01:39,630
+use it in a Java or Scala
+
+23
+00:01:39,630 --> 00:01:43,460
+or Python application and not doing the shell. The shell is just a quick and dirty
+
+24
+00:01:43,460 --> 00:01:44,610
+way for us to
+
+25
+00:01:44,610 --> 00:01:49,900
+learn about the library.
+
+26
+00:01:51,460 --> 00:01:55,960
+So here I went ahead and created the
+user's RDD
+
+27
+00:01:55,960 --> 00:02:01,040
+and did some transformation on it. In
+fact
+
+28
+00:02:01,040 --> 00:02:04,220
+I was supposed to import the GraphX library
+
+29
+00:02:04,220 --> 00:02:08,429
+prior to this, but because we're just
+creating the RDD and not doing anything
+
+30
+00:02:08,429 --> 00:02:09,820
+with GraphX yet
+
+31
+00:02:09,820 --> 00:02:12,990
+it actually went through and everything is ok.
+
+32
+00:02:22,819 --> 00:02:26,090
+So now go ahead and import the GraphX library,
+
+33
+00:02:26,090 --> 00:02:31,049
+which usually should be the first thing
+you do I just overlooked this particular
+
+34
+00:02:31,049 --> 00:02:31,560
+step.
+
+35
+00:02:31,560 --> 00:02:35,450
+but not a big deal. The line after that 
+
+36
+00:02:35,450 --> 00:02:38,780
+is to create a graph of the followers.
+
+37
+00:02:38,780 --> 00:02:43,290
+so I'm creating a followers graph based
+on the text file.
+
+38
+00:02:43,290 --> 00:02:46,530
+Now we have an RDD
+
+39
+00:02:46,530 --> 00:02:53,530
+of users and a followers graph.
+
+40
+00:02:54,370 --> 00:02:58,810
+You can see that it took about 425 seconds to load the edges.
+
+41
+00:02:58,810 --> 00:03:02,420
+Next we are going to parse
+
+42
+00:03:02,420 --> 00:03:05,540
+the data and then attach the user's
+attributes
+
+43
+00:03:05,540 --> 00:03:09,879
+together. This is just some business
+logic to attach
+
+44
+00:03:09,879 --> 00:03:13,099
+the user's attributes to the graph
+
+45
+00:03:13,099 --> 00:03:16,239
+and then we're going to create a
+
+46
+00:03:16,239 --> 00:03:20,590
+subgraph to restrict it with only
+username
+
+47
+00:03:20,590 --> 00:03:26,329
+and the names. Now we compute the
+
+48
+00:03:26,329 --> 00:03:29,609
+page rank to get the information they
+we're looking for.
+
+49
+00:03:29,609 --> 00:03:32,739
+so this is using the heart of the GraphX library
+
+50
+00:03:32,739 --> 00:03:37,560
+to compute the page rank and once that
+comes out
+
+51
+00:03:37,560 --> 00:03:40,659
+we will have the information we need to
+grab the attributes
+
+52
+00:03:40,659 --> 00:03:44,900
+of the top pagerank users.
+
+53
+00:03:44,900 --> 00:03:49,340
+Here we will paste in the commands
+
+54
+00:03:49,340 --> 00:03:56,340
+to grab the attributes of our top pagerank
+user.
+
+55
+00:03:58,599 --> 00:04:01,890
+Then finally will have what we need
+to print this information out to the
+
+56
+00:04:01,890 --> 00:04:02,510
+console.
+
+57
+00:04:02,510 --> 00:04:06,780
+We're gonna grab the top five
+
+58
+00:04:06,780 --> 00:04:10,310
+and do some ordering on it, and there you go.
+
+59
+00:04:10,310 --> 00:04:15,049
+This is the users and followers we rank them
+
+60
+00:04:15,049 --> 00:04:18,239
+using the pagerank algorithm from the
+the GraphX library.
+
+61
+00:04:18,239 --> 00:04:22,830
+This concludes this lab exercise. You should now be able to
+
+62
+00:04:22,830 --> 00:04:26,199
+see how to use the GraphX library or
+graph
+
+63
+00:04:26,199 --> 00:04:28,070
+processing scenario such as this.
+

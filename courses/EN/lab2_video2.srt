@@ -1,0 +1,417 @@
+1
+00:00:00,900 --> 00:00:04,950
+In the next section of this exercise, you're
+going to be joining our RDDs together.
+
+2
+00:00:04,950 --> 00:00:09,080
+So this would be some new operations
+that will allow you to work with RDDs
+
+3
+00:00:09,080 --> 00:00:12,450
+We're going to join the readme
+
+4
+00:00:12,450 --> 00:00:16,139
+and the changes file. Both of these files
+have been copied
+
+5
+00:00:16,139 --> 00:00:20,189
+into HDFS so let's create the RDD
+
+6
+00:00:20,189 --> 00:00:24,830
+for them. I just created the RDD for the readme.
+
+7
+00:00:24,830 --> 00:00:31,830
+Now I'm gonna create one for the changes file.
+
+8
+00:00:32,390 --> 00:00:36,040
+Take a look to see how many spark
+keywords are in each
+
+9
+00:00:36,040 --> 00:00:42,110
+file. We're going to run the filter
+
+10
+00:00:42,110 --> 00:00:46,140
+command and we're going to look for the line
+
+11
+00:00:46,140 --> 00:00:53,140
+that contains the word spark and we're going to count it.
+
+12
+00:00:57,210 --> 00:01:01,140
+Then do the same thing for the changes
+file. How many spark
+
+13
+00:01:01,140 --> 00:01:08,140
+keywords are in that?
+
+14
+00:01:15,250 --> 00:01:18,860
+Now let's do a word count on each of the RDD
+
+15
+00:01:18,860 --> 00:01:22,860
+so that the results will give you the
+key-value pairs.
+
+16
+00:01:22,860 --> 00:01:28,810
+Essentially the number of occurrences for each words in each of the file.
+
+17
+00:01:28,810 --> 00:01:32,680
+We will start with the readme file first.
+
+18
+00:01:32,680 --> 00:01:37,600
+I'm going to call the readme.count().That is going to invoke
+
+19
+00:01:37,600 --> 00:01:40,789
+the flatMap operation to split up the
+words
+
+20
+00:01:40,789 --> 00:01:44,740
+from the line so essentially we will have
+one word per line
+
+21
+00:01:44,740 --> 00:01:48,520
+and then we're going to map each word to the value of
+
+22
+00:01:48,520 --> 00:01:52,360
+one, from which we can reduce by key
+
+23
+00:01:52,360 --> 00:01:56,569
+and here you see the shorthand notation
+for the reduce by key.
+
+24
+00:01:56,569 --> 00:02:00,539
+Essentially we're going to add
+
+25
+00:02:00,539 --> 00:02:03,770
+the values of the two keys together to
+get the final count.
+
+26
+00:02:03,770 --> 00:02:08,369
+So when this is done across the worker
+nodes in the cluster, it is going to be
+
+27
+00:02:08,369 --> 00:02:09,690
+done in parallel
+
+28
+00:02:09,690 --> 00:02:13,370
+So you get a word count of that readme
+
+29
+00:02:13,370 --> 00:02:17,160
+file. Let's do the exact same thing
+
+30
+00:02:17,160 --> 00:02:24,160
+for the changes.txt file.
+
+31
+00:02:24,180 --> 00:02:26,400
+Breaking up the words
+
+32
+00:02:26,400 --> 00:02:29,450
+from the line to have individual words per
+line
+
+33
+00:02:29,450 --> 00:02:33,150
+and then mapping each word to the value
+1
+
+34
+00:02:33,150 --> 00:02:40,150
+and finally reducing it by the key to do
+a count of the number of words.
+
+35
+00:02:48,490 --> 00:02:51,740
+To view each of the files individually,
+
+36
+00:02:51,740 --> 00:02:56,200
+the word counts, we'll just call the collect
+
+37
+00:02:56,200 --> 00:02:59,760
+operation to give you the list of words 
+
+38
+00:02:59,760 --> 00:03:03,430
+words and their counts. The same thing can be done for the changes
+
+39
+00:03:03,430 --> 00:03:10,430
+RDD. Now, why don't we join these two together to
+
+40
+00:03:10,750 --> 00:03:15,000
+get a collective word count. To join the
+RDDs
+
+41
+00:03:15,000 --> 00:03:20,500
+you are going to use the join function. The join function will essentially take
+
+42
+00:03:20,500 --> 00:03:24,150
+the key/value from one and add
+
+43
+00:03:24,150 --> 00:03:27,430
+the key/value from another to get
+
+44
+00:03:27,430 --> 00:03:30,709
+key and then the two values next each
+other.
+
+45
+00:03:30,709 --> 00:03:33,930
+This the default action that is taken
+
+46
+00:03:33,930 --> 00:03:37,860
+in a join operation. I'm creating a
+joinedRDD
+
+47
+00:03:37,860 --> 00:03:43,080
+readmeCount. The first RDD dot join
+changes count, which is the second RDD
+
+48
+00:03:43,080 --> 00:03:47,440
+so that creates the joined RDD.
+
+49
+00:03:47,440 --> 00:03:53,410
+Then I want to cache our RDD.
+
+50
+00:03:53,410 --> 00:03:59,100
+and I'll print everything out onto the console. I'm going to call joined.collect().foreach()
+
+51
+00:03:59,100 --> 00:04:00,830
+I'm going to iterate through
+
+52
+00:04:00,830 --> 00:04:05,440
+and print onto the console.
+
+53
+00:04:05,480 --> 00:04:09,030
+So you see here the key and then
+
+54
+00:04:09,030 --> 00:04:13,400
+is the key value pair of the values. For
+example in the word
+
+55
+00:04:13,400 --> 00:04:16,700
+print, appeared one time in the readme
+file
+
+56
+00:04:16,700 --> 00:04:19,720
+and five times in the changes file.
+
+57
+00:04:19,720 --> 00:04:24,960
+This is the default operation of the join. What if you want to combine
+
+58
+00:04:24,960 --> 00:04:28,520
+for example, the two values
+
+59
+00:04:28,520 --> 00:04:31,919
+and add them up. That might be more useful, so
+
+60
+00:04:31,919 --> 00:04:35,020
+the next step we're going to combine these values.
+
+61
+00:04:35,020 --> 00:04:38,770
+Going to show you the key and then the
+
+62
+00:04:38,770 --> 00:04:42,260
+combined sum from the two values of the joined dataset. 
+
+63
+00:04:42,260 --> 00:04:46,400
+I'll create a new RDD, called joinedSum
+
+64
+00:04:46,400 --> 00:04:49,729
+that's going to do a map
+
+65
+00:04:49,729 --> 00:04:53,290
+operation and so for each key,
+
+66
+00:04:53,290 --> 00:04:57,789
+I'm going to grab the first index so
+
+67
+00:04:57,789 --> 00:05:02,639
+._1 , which grabs the value of the first index
+
+68
+00:05:02,639 --> 00:05:05,180
+of the original dataset.
+
+69
+00:05:05,180 --> 00:05:09,070
+and then we're going to map it back out the way it is. So this is the key. We are going to
+
+70
+00:05:09,070 --> 00:05:09,960
+print the key out
+
+71
+00:05:09,960 --> 00:05:16,550
+and then for the value, we are going to do some addition on it. On the second
+
+72
+00:05:16,550 --> 00:05:20,870
+index is actually an index of an array,
+
+73
+00:05:20,870 --> 00:05:24,810
+that's why I can invoke the k._2
+
+74
+00:05:24,810 --> 00:05:27,870
+and then so in this case 
+
+75
+00:05:27,870 --> 00:05:32,100
+(1,1) is an array. So I want the first value of that array
+
+76
+00:05:32,100 --> 00:05:32,560
+which is
+
+77
+00:05:32,560 --> 00:05:36,960
+._1
+
+78
+00:05:36,960 --> 00:05:39,910
+and I want the value of the 2nd array, which is
+
+79
+00:05:39,910 --> 00:05:44,220
+again, the 2nd index, is the k._2
+
+80
+00:05:44,220 --> 00:05:49,090
+which is an array and then you going to call the second index of the array, which is
+
+81
+00:05:49,090 --> 00:05:52,960
+._2 So it is ._1 + ._2 
+
+82
+00:05:52,960 --> 00:05:56,729
+and you add it together. So that is the
+
+83
+00:05:56,729 --> 00:06:02,240
+RDD, which is called joinedSum. 
+
+84
+00:06:02,240 --> 00:06:07,250
+Again, that's the key, and we have the elements of the first array, and then the 
+
+85
+00:06:07,250 --> 00:06:10,960
+second elements of the array added together. We're adding both keys. 
+
+86
+00:06:10,960 --> 00:06:16,690
+Both values to the keys together. Let's call the collect to take a look.
+
+87
+00:06:16,690 --> 00:06:21,479
+So check it out, now we know that the values of CLI
+
+88
+00:06:21,479 --> 00:06:27,680
+appears five times across both
+files and basically everything else shows you
+
+89
+00:06:27,680 --> 00:06:28,550
+the combined
+
+90
+00:06:28,550 --> 00:06:31,690
+values. You want to make sure it's
+correct, you can
+
+91
+00:06:31,690 --> 00:06:35,169
+do a take(5) which grabs the first
+five elements
+
+92
+00:06:35,169 --> 00:06:39,270
+of the original joined and I want
+print it to the
+
+93
+00:06:39,270 --> 00:06:42,610
+console. Then I'll be doing the same thing
+
+94
+00:06:42,610 --> 00:06:45,900
+for the joinedSum, which is the combined one, 
+
+95
+00:06:45,900 --> 00:06:50,870
+to see that the values have been indeed
+been added together correctly. so CLI
+
+96
+00:06:50,870 --> 00:06:51,830
+was (1,4)
+
+97
+00:06:51,830 --> 00:06:56,710
+now CLI is 5 and you can see how
+
+98
+00:06:56,710 --> 00:06:58,930
+all the values are added together correctly. 
+

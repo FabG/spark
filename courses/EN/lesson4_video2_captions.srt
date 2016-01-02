@@ -1,0 +1,202 @@
+1
+00:00:02,560 --> 00:00:08,860
+Spark streaming gives you the capability to
+process live streaming data in small batches.
+
+2
+00:00:08,860 --> 00:00:14,980
+Utilizing Spark's core, Spark Streaming is
+scalable, high-throughput and fault-tolerant.
+
+3
+00:00:14,980 --> 00:00:21,980
+You write Stream programs with DStreams, which
+is a sequence of RDDs from a stream of data.
+
+4
+00:00:22,480 --> 00:00:27,109
+There are various data sources that Spark
+Streaming receives from including, Kafka,
+
+5
+00:00:27,109 --> 00:00:34,109
+Flume, HDFS, Kinesis, or Twitter. It pushes
+data out to HDFS, databases, or some sort
+
+6
+00:00:34,780 --> 00:00:37,110
+of dashboard.
+
+7
+00:00:37,110 --> 00:00:42,090
+Spark Streaming supports Scala, Java and Python.
+Python was actually introduced with Spark
+
+8
+00:00:42,090 --> 00:00:48,580
+1.2. Python has all the transformations that
+Scala and Java have with DStreams, but it
+
+9
+00:00:48,580 --> 00:00:53,550
+can only support text data types. Support
+for other sources such as Kafka and Flume
+
+10
+00:00:53,550 --> 00:00:59,500
+will be available in future releases for Python.
+
+11
+00:00:59,500 --> 00:01:04,689
+Here's a quick view of how Spark Streaming
+works. First the input stream comes in to
+
+12
+00:01:04,689 --> 00:01:09,990
+Spark Streaming. Then that data stream is
+broken up into batches of data that is fed
+
+13
+00:01:09,990 --> 00:01:16,579
+into the Spark engine for processing. Once
+the data has been processed, it is sent out
+
+14
+00:01:16,579 --> 00:01:18,210
+in batches.
+
+15
+00:01:18,210 --> 00:01:23,200
+Spark Stream support sliding window operations.
+In a windowed computation, every time the
+
+16
+00:01:23,200 --> 00:01:28,939
+window slides over a source of DStream, the
+source RDDs that falls within the window are
+
+17
+00:01:28,939 --> 00:01:34,520
+combined and operated upon to produce the
+resulting RDD.
+
+18
+00:01:34,520 --> 00:01:40,179
+There are two parameters for a sliding window.
+The window length is the duration of the window
+
+19
+00:01:40,179 --> 00:01:45,859
+and the sliding interval is the interval in
+which the window operation is performed. Both
+
+20
+00:01:45,859 --> 00:01:52,859
+of these must be in multiples of the batch
+interval of the source DStream.
+
+21
+00:01:53,490 --> 00:01:58,939
+In the diagram, the window length is 3 and
+the sliding interval is 2. To put it in a
+
+22
+00:01:58,939 --> 00:02:04,509
+different perspective, say you wanted to generate
+word counts over last 30 seconds of data,
+
+23
+00:02:04,509 --> 00:02:11,159
+every 10 seconds. To do this, you would apply
+the reduceByKeyAndWindow operation on the
+
+24
+00:02:11,159 --> 00:02:18,159
+pairs of DStream of (Word,1) pairs over the
+last 30 seconds of data.
+
+25
+00:02:23,080 --> 00:02:27,700
+Here we a have a simple example. We want to
+count the number of words coming in from the
+
+26
+00:02:27,700 --> 00:02:34,379
+TCP socket. First and foremost, you must import
+the appropriate libraries. Then, you would
+
+27
+00:02:34,379 --> 00:02:40,650
+create the StreamingContext object. In it,
+you specify to use two threads with the batch
+
+28
+00:02:40,650 --> 00:02:47,650
+interval of 1 second. Next, you create the
+DStream, which is a sequence of RDDs, that
+
+29
+00:02:47,700 --> 00:02:54,700
+listens to the TCP socket on the given hostname
+and port. Each record of the DStream is a
+
+30
+00:02:55,140 --> 00:03:02,140
+line of text. You split up the lines into
+individual words using the flatMap function.
+
+31
+00:03:02,250 --> 00:03:06,519
+The flatMap function is a one-to-many DStream
+operation that takes one line and creates
+
+32
+00:03:06,519 --> 00:03:12,750
+a new DStream by generating multiple records
+(in our case, that would be the words on the
+
+33
+00:03:12,750 --> 00:03:18,640
+line). Finally, with the words DStream, you
+can count the words using the map and reduce
+
+34
+00:03:18,640 --> 00:03:25,640
+model. Then you print out the results to the
+console.
+
+35
+00:03:25,650 --> 00:03:30,340
+One thing to note is that when each element
+of the application is executed, the real processing
+
+36
+00:03:30,340 --> 00:03:36,489
+doesn't actually happen yet. You have to explicitly
+tell it to start. Once the application begins,
+
+37
+00:03:36,489 --> 00:03:41,370
+it will continue running until the computation
+terminates. The code snippets that you see
+
+38
+00:03:41,370 --> 00:03:47,989
+here is from a full sample found in the NetworkWordCount.
+To run the full example, you must first start
+
+39
+00:03:47,989 --> 00:03:53,430
+up netcat, which is a small utility found
+in most Unix-like systems. This will act as
+
+40
+00:03:53,430 --> 00:03:59,159
+a data source to give the application streams
+of data to work with. Then, on a different
+
+41
+00:03:59,159 --> 00:04:02,420
+terminal window, run the application using
+the command shown here.
+

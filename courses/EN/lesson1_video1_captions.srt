@@ -1,0 +1,270 @@
+1
+00:00:01,050 --> 00:00:05,889
+Hi - Welcome to Spark Fundamentals. Introduction
+to Spark.
+
+2
+00:00:05,889 --> 00:00:09,290
+Objectives:
+After completing this lesson, you should be
+
+3
+00:00:09,290 --> 00:00:15,019
+able to explain the purpose of Spark and understand
+why and when you would use Spark. You should
+
+4
+00:00:15,019 --> 00:00:19,980
+be able to list and describe the components
+of the Spark unified stack. You will be able
+
+5
+00:00:19,980 --> 00:00:26,089
+to understand the basics of the Resilient Distributed
+Dataset, Spark's primary data abstraction.
+
+6
+00:00:26,089 --> 00:00:30,919
+Then you will see how to download and install
+Spark standalone to test it out yourself.
+
+7
+00:00:30,919 --> 00:00:35,550
+You will get an overview of Scala and Python
+to prepare for using the two Spark shells.
+
+8
+00:00:35,550 --> 00:00:38,739
+There is an explosion of data. No matter where
+
+9
+00:00:38,739 --> 00:00:44,250
+you look, data is everywhere. You get data
+from social media such as Twitter feeds, Facebook
+
+10
+00:00:44,250 --> 00:00:49,059
+posts, SMS, and a variety of others. The need
+to be able to process those data as quickly
+
+11
+00:00:49,059 --> 00:00:53,809
+as possible becomes more important than ever.
+How can you find out what your customers want
+
+12
+00:00:53,809 --> 00:00:57,859
+and be able to offer it to them right away?
+You do not want to wait hours for a batch
+
+13
+00:00:57,859 --> 00:01:02,399
+job to complete. You need to have it in minutes
+or less.
+
+14
+00:01:02,399 --> 00:01:06,400
+MapReduce has been useful, but the amount
+of time it takes for the jobs to run is no
+
+15
+00:01:06,400 --> 00:01:11,570
+longer acceptable in most situations. The
+learning curve to writing a MapReduce job
+
+16
+00:01:11,570 --> 00:01:18,080
+is also difficult as it takes specific programming
+knowledge and the know-how. Also, MapReduce
+
+17
+00:01:18,080 --> 00:01:22,710
+jobs only work for a specific set of use cases.
+You need something that works for a wider
+
+18
+00:01:22,710 --> 00:01:25,470
+set of use cases.
+
+19
+00:01:25,470 --> 00:01:31,320
+Apache Spark was designed as a computing platform
+to be fast, general-purpose, and easy to use.
+
+20
+00:01:31,320 --> 00:01:36,990
+It extends the MapReduce model and takes it
+to a whole other level.
+
+21
+00:01:36,990 --> 00:01:42,520
+The speed comes from the in-memory computations.
+Applications running in memory allows for
+
+22
+00:01:42,520 --> 00:01:48,080
+a much faster processing and response. Spark
+is even faster than MapReduce for complex
+
+23
+00:01:48,080 --> 00:01:51,030
+applications on disks.
+
+24
+00:01:51,030 --> 00:01:57,110
+This generality covers a wide range of workloads
+under one system. You can run batch application
+
+25
+00:01:57,110 --> 00:02:03,310
+such as MapReduce types jobs or iterative
+algorithms that builds upon each other. You
+
+26
+00:02:03,310 --> 00:02:08,610
+can also run interactive queries and process
+streaming data with your application. In a
+
+27
+00:02:08,610 --> 00:02:12,600
+later slide, you'll see that there are a
+number of libraries which you can easily use
+
+28
+00:02:12,600 --> 00:02:17,820
+to expand beyond the basic Spark capabilities.
+
+29
+00:02:17,820 --> 00:02:22,690
+The ease of use with Spark enables you to
+quickly pick it up using simple APIs for Scala,
+
+30
+00:02:22,690 --> 00:02:28,880
+Python and Java. As mentioned, there are additional
+libraries which you can use for SQL, machine
+
+31
+00:02:28,880 --> 00:02:34,920
+learning, streaming, and graph processing.
+Spark runs on Hadoop clusters such as Hadoop
+
+32
+00:02:34,920 --> 00:02:40,460
+YARN or Apache Mesos, or even as a standalone
+with its own scheduler.
+
+33
+00:02:40,460 --> 00:02:43,430
+You may be asking, why would I want to use
+
+34
+00:02:43,430 --> 00:02:48,620
+Spark and what would I use it for? As you
+know, Spark is related to MapReduce in a sense
+
+35
+00:02:48,620 --> 00:02:51,600
+that it expands on its capabilities.
+
+36
+00:02:51,600 --> 00:02:58,290
+Like MapReduce, Spark provides parallel distributed
+processing, fault tolerance on commodity hardware,
+
+37
+00:02:58,290 --> 00:03:04,520
+scalability, etc. Spark adds to the concept
+with aggressively cached in-memory distributed
+
+38
+00:03:04,520 --> 00:03:10,410
+computing, low latency, high level APIs and
+stack of high level tools described on the
+
+39
+00:03:10,410 --> 00:03:14,180
+next slide. This saves time and money.
+
+40
+00:03:14,180 --> 00:03:18,490
+There are two groups that we can consider
+here who would want to use Spark: Data Scientists
+
+41
+00:03:18,490 --> 00:03:24,290
+and Engineers. You may ask, but aren't they
+similar? In a sense, yes, they do have overlapping
+
+42
+00:03:24,290 --> 00:03:29,180
+skill sets, but for our purpose, we'll define
+data scientist as those who need to analyze
+
+43
+00:03:29,180 --> 00:03:33,819
+and model the data to obtain insight. They
+would have techniques to transform the data
+
+44
+00:03:33,819 --> 00:03:39,000
+into something they can use for data analysis.
+They will use Spark for its ad-hoc analysis
+
+45
+00:03:39,000 --> 00:03:44,010
+to run interactive queries that will give
+them results immediately. Data scientists
+
+46
+00:03:44,010 --> 00:03:49,340
+may also have experience using SQL, statistics,
+machine learning and some programming, usually
+
+47
+00:03:49,340 --> 00:03:55,190
+in Python, MatLab or R. Once the data scientists
+have obtained insights on the data and later
+
+48
+00:03:55,190 --> 00:03:59,790
+someone determines that there's a need develop
+a production data processing application,
+
+49
+00:03:59,790 --> 00:04:04,910
+a web application, or some system to act upon
+the insight, the person called upon to work
+
+50
+00:04:04,910 --> 00:04:08,560
+on it would be the engineers.
+
+51
+00:04:08,560 --> 00:04:12,989
+Engineers would use Spark's programming
+API to develop a system that implement business
+
+52
+00:04:12,989 --> 00:04:19,719
+use cases. Spark parallelize these applications
+across the clusters while hiding the complexities
+
+53
+00:04:19,719 --> 00:04:26,330
+of distributed systems programming and fault
+tolerance. Engineers can use Spark to monitor,
+
+54
+00:04:26,330 --> 00:04:29,090
+inspect and tune applications.
+
+55
+00:04:29,090 --> 00:04:35,110
+For everyone else, Spark is easy to use with
+a wide range of functionality. The product
+
+56
+00:04:35,110 --> 00:04:36,430
+is mature and reliable.
+

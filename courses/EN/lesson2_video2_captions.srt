@@ -1,0 +1,315 @@
+1
+00:00:01,390 --> 00:00:06,040
+You heard me mention direct acyclic graph
+several times now. On this slide, you will
+
+2
+00:00:06,040 --> 00:00:11,910
+see how to view the DAG of any particular
+RDD. A DAG is essentially a graph of the business
+
+3
+00:00:11,910 --> 00:00:18,910
+logic and does not get executed until an action
+is called -- often called lazy evaluation.
+
+4
+00:00:20,230 --> 00:00:26,210
+To view the DAG of a RDD after a series of
+transformation, use the toDebugString method
+
+5
+00:00:26,210 --> 00:00:31,060
+as you see here on the slide. It will display
+the series of transformation that Spark will
+
+6
+00:00:31,060 --> 00:00:37,300
+go through once an action is called. You read
+it from the bottom up. In the sample DAG shown
+
+7
+00:00:37,300 --> 00:00:42,329
+on the slide, you can see that it starts as
+a textFile and goes through a series of transformation
+
+8
+00:00:42,329 --> 00:00:49,230
+such as map and filter, followed by more map
+operations. Remember, that it is this behavior
+
+9
+00:00:49,230 --> 00:00:54,140
+that allows for fault tolerance. If a node
+goes offline and comes back on, all it has
+
+10
+00:00:54,140 --> 00:00:59,059
+to do is just grab a copy of this from a neighboring
+node and rebuild the graph back to where it
+
+11
+00:00:59,059 --> 00:01:02,269
+was before it went offline.
+
+12
+00:01:02,269 --> 00:01:06,170
+In the next several slides, you will see at
+a high level what happens when an action is
+
+13
+00:01:06,170 --> 00:01:08,310
+executed.
+
+14
+00:01:08,310 --> 00:01:15,100
+Let's look at the code first. The goal here
+is to analyze some log files. The first line
+
+15
+00:01:15,100 --> 00:01:20,890
+you load the log from the hadoop file system.
+The next two lines you filter out the messages
+
+16
+00:01:20,890 --> 00:01:25,930
+within the log errors. Before you invoke some
+action on it, you tell it to cache the filtered
+
+17
+00:01:25,930 --> 00:01:31,700
+dataset - it doesn't actually cache it yet
+as nothing has been done up until this point.
+
+18
+00:01:31,700 --> 00:01:37,159
+Then you do more filters to get specific error
+messages relating to mysql and php followed
+
+19
+00:01:37,159 --> 00:01:42,890
+by the count action to find out how many errors
+were related to each of those filters.
+
+20
+00:01:42,890 --> 00:01:47,770
+Now let's walk through each of the steps.
+The first thing that happens when you load
+
+21
+00:01:47,770 --> 00:01:53,420
+in the text file is the data is partitioned
+into different blocks across the cluster.
+
+22
+00:01:53,420 --> 00:01:59,859
+Then the driver sends the code to be executed
+on each block. In the example, it would be
+
+23
+00:01:59,859 --> 00:02:04,439
+the various transformations and actions that
+will be sent out to the workers. Actually,
+
+24
+00:02:04,439 --> 00:02:08,950
+it is the executor on each workers that is
+going to be performing the work on each block.
+
+25
+00:02:08,950 --> 00:02:14,790
+You will see a bit more on executors in a
+later lesson.
+
+26
+00:02:14,790 --> 00:02:21,790
+Then the executors read the HDFS blocks to
+prepare the data for the operations in parallel.
+
+27
+00:02:22,540 --> 00:02:26,450
+After a series of transformations, you want
+to cache the results up until that point into
+
+28
+00:02:26,450 --> 00:02:32,140
+memory. A cache is created.
+
+29
+00:02:32,140 --> 00:02:37,330
+After the first action completes, the results
+are sent back to the driver. In this case,
+
+30
+00:02:37,330 --> 00:02:44,330
+we're looking for messages that relate to
+mysql. This is then returned back to the driver.
+
+31
+00:02:47,190 --> 00:02:51,700
+To process the second action, Spark will use
+the data on the cache -- it doesn't need to
+
+32
+00:02:51,700 --> 00:02:57,030
+go to the HDFS data again. It just reads it
+from the cache and processes the data from
+
+33
+00:02:57,030 --> 00:03:00,730
+there.
+
+34
+00:03:00,730 --> 00:03:07,730
+Finally the results go back to the driver
+and we have completed a full cycle.
+
+35
+00:03:10,290 --> 00:03:15,909
+So a quick recap. This is a subset of some
+of the transformations available. The full
+
+36
+00:03:15,909 --> 00:03:19,709
+list of them can be found on Spark's website.
+
+37
+00:03:19,709 --> 00:03:24,220
+Remember that Transformations are essentially
+lazy evaluations. Nothing is executed until
+
+38
+00:03:24,220 --> 00:03:29,409
+an action is called. Each transformation function
+basically updates the graph and when an action
+
+39
+00:03:29,409 --> 00:03:34,330
+is called, the graph is executed. Transformation
+returns a pointer to the new RDD.
+
+40
+00:03:34,330 --> 00:03:39,620
+I'm not going to read through this as you
+can do so yourself. I'll just point out some
+
+41
+00:03:39,620 --> 00:03:42,870
+things I think are important.
+
+42
+00:03:42,870 --> 00:03:47,680
+The flatMap function is similar to map, but
+each input can be mapped to 0 or more output
+
+43
+00:03:47,680 --> 00:03:52,680
+items. What this means is that the returned
+pointer of the func method, should return
+
+44
+00:03:52,680 --> 00:03:57,819
+a sequence of objects, rather than a single
+item. It would mean that the flatMap would
+
+45
+00:03:57,819 --> 00:04:03,480
+flatten a list of lists for the operations
+that follows. Basically this would be used
+
+46
+00:04:03,480 --> 00:04:08,360
+for MapReduce operations where you might have
+a text file and each time a line is read in,
+
+47
+00:04:08,360 --> 00:04:14,849
+you split that line up by spaces to get individual
+keywords. Each of those lines ultimately is
+
+48
+00:04:14,849 --> 00:04:20,520
+flatten so that you can perform the map operation
+on it to map each keyword to the value of
+
+49
+00:04:20,520 --> 00:04:21,070
+one.
+
+50
+00:04:21,070 --> 00:04:26,890
+The join function combines two sets of key
+value pairs and return a set of keys to a
+
+51
+00:04:26,890 --> 00:04:33,890
+pair of values from the two initial set. For
+example, you have a K,V pair and a K,W pair.
+
+52
+00:04:36,310 --> 00:04:43,050
+When you join them together, you will get
+a K, (V,W) set.
+
+53
+00:04:43,050 --> 00:04:49,500
+The reduceByKey function aggregates on each
+key by using the given reduce function. This
+
+54
+00:04:49,500 --> 00:04:54,100
+is something you would use in a WordCount
+to sum up the values for each word to count
+
+55
+00:04:54,100 --> 00:04:57,300
+its occurrences.
+
+56
+00:04:57,300 --> 00:05:02,940
+Action returns values. Again, you can find
+more information on Spark's website. This
+
+57
+00:05:02,940 --> 00:05:05,700
+is just a subset.
+
+58
+00:05:05,700 --> 00:05:12,470
+The collect function returns all the elements
+of the dataset as an array of the driver program.
+
+59
+00:05:12,470 --> 00:05:16,850
+This is usually useful after a filter or another
+operation that returns a significantly small
+
+60
+00:05:16,850 --> 00:05:20,830
+subset of data to make sure your filter function
+works correctly.
+
+61
+00:05:20,830 --> 00:05:26,450
+The count function returns the number of elements
+in a dataset and can also be used to check
+
+62
+00:05:26,450 --> 00:05:29,720
+and test transformations.
+
+63
+00:05:29,720 --> 00:05:36,210
+The take(n) function returns an array with
+the first n elements. Note that this is currently
+
+64
+00:05:36,210 --> 00:05:42,450
+not executed in parallel. The driver computes
+all the elements.
+
+65
+00:05:42,450 --> 00:05:47,570
+The foreach(func) function run a function
+func on each element of the dataset.
+

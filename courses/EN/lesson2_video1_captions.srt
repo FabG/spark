@@ -1,0 +1,321 @@
+1
+00:00:00,560 --> 00:00:05,230
+Hi. Welcome to the Spark Fundamentals course.
+This lesson will cover Resilient Distributed
+
+2
+00:00:05,230 --> 00:00:09,430
+Dataset.
+
+3
+00:00:09,430 --> 00:00:13,800
+After completing this lesson, you should be
+able to understand and describe Spark's primary
+
+4
+00:00:13,800 --> 00:00:18,740
+data abstraction, the RDD. You should know
+how to create parallelized collections from
+
+5
+00:00:18,740 --> 00:00:24,820
+internal and external datasets. You should
+be able to use RDD opeartions such as Transformations
+
+6
+00:00:24,820 --> 00:00:30,179
+and Actions. Finally, I will also show you
+how to take advantage of Spark's shared variables
+
+7
+00:00:30,179 --> 00:00:34,010
+and key-value pairs.
+
+8
+00:00:34,010 --> 00:00:40,580
+Resilient Distributed Dataset (RDD) is Spark's
+primary abstraction. RDD is a fault tolerant
+
+9
+00:00:40,580 --> 00:00:45,260
+collection of elements that can be parallelized.
+In other words, they can be made to be operated
+
+10
+00:00:45,260 --> 00:00:51,550
+on in parallel. They are also immutable. These
+are the fundamental primary units of data
+
+11
+00:00:51,550 --> 00:00:54,010
+in Spark.
+
+12
+00:00:54,010 --> 00:00:59,920
+When RDDs are created, a direct acyclic graph
+(DAG) is created. This type of operation is
+
+13
+00:00:59,920 --> 00:01:04,320
+called transformations. Transformations makes
+updates to that graph, but nothing actually
+
+14
+00:01:04,320 --> 00:01:10,270
+happens until some action is called. Actions
+are another type of operations. We'll talk
+
+15
+00:01:10,270 --> 00:01:15,439
+more about this shortly. The notion here is
+that the graphs can be replayed on nodes that
+
+16
+00:01:15,439 --> 00:01:21,020
+need to get back to the state it was before
+it went offline - thus providing fault tolerance.
+
+17
+00:01:21,020 --> 00:01:26,600
+The elements of the RDD can be operated on
+in parallel across the cluster. Remember,
+
+18
+00:01:26,600 --> 00:01:30,990
+transformations return a pointer to the RDD
+created and actions return values that comes
+
+19
+00:01:30,990 --> 00:01:31,990
+from the action.
+
+20
+00:01:31,990 --> 00:01:38,990
+There are three methods for creating a RDD.
+You can parallelize an existing collection.
+
+21
+00:01:39,229 --> 00:01:44,079
+This means that the data already resides within
+Spark and can now be operated on in parallel.
+
+22
+00:01:44,079 --> 00:01:50,030
+As an example, if you have an array of data,
+you can create a RDD out of it by calling
+
+23
+00:01:50,030 --> 00:01:56,200
+the parallelized method. This method returns
+a pointer to the RDD. So this new distributed
+
+24
+00:01:56,200 --> 00:02:00,749
+dataset can now be operated upon in parallel
+throughout the cluster.
+
+25
+00:02:00,749 --> 00:02:06,759
+The second method to create a RDD, is to reference
+a dataset. This dataset can come from any
+
+26
+00:02:06,759 --> 00:02:13,759
+storage source supported by Hadoop such as
+HDFS, Cassandra, HBase, Amazon S3, etc.
+
+27
+00:02:14,909 --> 00:02:21,909
+The third method to create a RDD is from transforming
+an existing RDD to create a new RDD. In other
+
+28
+00:02:22,049 --> 00:02:26,700
+words, let's say you have the array of data
+that you parallelized earlier. Now you want
+
+29
+00:02:26,700 --> 00:02:31,930
+to filter out strings that are shorter than
+20 characters. A new RDD is created using
+
+30
+00:02:31,930 --> 00:02:33,819
+the filter method.
+
+31
+00:02:33,819 --> 00:02:40,629
+A final point on this slide. Spark supports
+text files, SequenceFiles and any other Hadoop
+
+32
+00:02:40,629 --> 00:02:41,680
+InputFormat.
+
+33
+00:02:41,680 --> 00:02:48,680
+Here is a quick example of how to create an
+RDD from an existing collection of data. In
+
+34
+00:02:49,000 --> 00:02:52,780
+the examples throughout the course, unless
+otherwise indicated, we're going to be using
+
+35
+00:02:52,780 --> 00:02:58,250
+Scala to show how Spark works. In the lab
+exercises, you will get to work with Python
+
+36
+00:02:58,250 --> 00:03:04,689
+and Java as well. So the first thing is to
+launch the Spark shell. This command is located
+
+37
+00:03:04,689 --> 00:03:09,930
+under the $SPARK_HOME/bin directory. In the
+lab environment, SPARK_HOME is the path to
+
+38
+00:03:09,930 --> 00:03:12,900
+where Spark was installed.
+
+39
+00:03:12,900 --> 00:03:19,189
+Once the shell is up, create some data with
+values from 1 to 10,000. Then, create an RDD
+
+40
+00:03:19,189 --> 00:03:25,129
+from that data using the parallelize method
+from the SparkContext, shown as sc on the
+
+41
+00:03:25,129 --> 00:03:29,510
+slide. This means that the data can now be
+operated on in parallel.
+
+42
+00:03:29,510 --> 00:03:34,219
+We will cover more on the SparkContext, the
+sc object that is invoking the parallelized
+
+43
+00:03:34,219 --> 00:03:38,670
+function, in our programming lesson, so for
+now, just know that when you initialize a
+
+44
+00:03:38,670 --> 00:03:44,260
+shell, the SparkContext, sc, is initialized
+for you to use.
+
+45
+00:03:44,260 --> 00:03:49,299
+The parallelize method returns a pointer to
+the RDD. Remember, transformations operations
+
+46
+00:03:49,299 --> 00:03:54,140
+such as parallelize, only returns a pointer
+to the RDD. It actually won't create that
+
+47
+00:03:54,140 --> 00:04:00,340
+RDD until some action is invoked on it. With
+this new RDD, you can perform additional transformations
+
+48
+00:04:00,340 --> 00:04:05,200
+or actions on it such as the filter transformation.
+
+49
+00:04:05,200 --> 00:04:11,060
+Another way to create a RDD is from an external
+dataset. In the example here, we are creating
+
+50
+00:04:11,060 --> 00:04:16,930
+a RDD from a text file using the textFile
+method of the SparkContext object. You will
+
+51
+00:04:16,930 --> 00:04:22,240
+see plenty more examples of how to create
+RDD throughout this course.
+
+52
+00:04:22,240 --> 00:04:27,310
+Here we go over some basic operations. You
+have seen how to load a file from an external
+
+53
+00:04:27,310 --> 00:04:34,310
+dataset. This time, however, we are loading
+a file from the hdfs. Loading the file creates
+
+54
+00:04:34,449 --> 00:04:40,740
+a RDD, which is only a pointer to the file.
+The dataset is not loaded into memory yet.
+
+55
+00:04:40,740 --> 00:04:45,710
+Nothing will happen until some action is called.
+The transformation basically updates the direct
+
+56
+00:04:45,710 --> 00:04:48,229
+acyclic graph (DAG).
+
+57
+00:04:48,229 --> 00:04:55,229
+So the transformation here is saying map each
+line s, to the length of that line. Then,
+
+58
+00:04:55,850 --> 00:05:02,030
+the action operation is reducing it to get
+the total length of all the lines. When the
+
+59
+00:05:02,030 --> 00:05:07,199
+action is called, Spark goes through the DAG
+and applies all the transformation up until
+
+60
+00:05:07,199 --> 00:05:12,550
+that point, followed by the action and then
+a value is returned back to the caller.
+
+61
+00:05:12,550 --> 00:05:19,550
+A common example is a MapReduce word count.
+You first split up the file by words and then
+
+62
+00:05:19,590 --> 00:05:26,060
+map each word into a key value pair with the
+word as the key, and the value of 1. Then
+
+63
+00:05:26,060 --> 00:05:31,669
+you reduce by the key, which adds up all the
+value of the same key, effectively, counting
+
+64
+00:05:31,669 --> 00:05:37,660
+the number of occurrences of that key. Finally,
+you call the collect() function, which is
+
+65
+00:05:37,660 --> 00:05:41,539
+an action, to have it print out all the words
+and its occurrences.
+
+66
+00:05:41,539 --> 00:05:44,520
+Again, you will get to work with this in the
+lab exercises.
+

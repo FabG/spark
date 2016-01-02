@@ -1,0 +1,362 @@
+1
+00:00:00,710 --> 00:00:04,290
+Hi and welcome to the lab exercise 4: Working with the Spark libraries.
+
+2
+00:00:04,290 --> 00:00:08,269
+This exercise will show you how to
+create various applications
+
+3
+00:00:08,269 --> 00:00:11,580
+using these libraries. The advantage of these libraries are that
+
+4
+00:00:11,580 --> 00:00:15,769
+they a tightly integrated with Spark
+with little overhead as opposed to other
+
+5
+00:00:15,769 --> 00:00:16,670
+software
+
+6
+00:00:16,670 --> 00:00:21,130
+where you would have to integrate and
+work with different 3rd party libraries.
+
+7
+00:00:21,130 --> 00:00:25,510
+This one, everything is bundled
+together. Any updates or changes made to
+
+8
+00:00:25,510 --> 00:00:26,510
+the Spark core,
+
+9
+00:00:26,510 --> 00:00:30,650
+all these libraries will, in fact, get them as well.
+
+10
+00:00:30,650 --> 00:00:33,700
+The first section of this lab exercise, we're going to
+
+11
+00:00:33,700 --> 00:00:37,300
+create a Spark application with SparkSQL.
+
+12
+00:00:37,300 --> 00:00:41,540
+SparkSQL provides the ability to
+write relational queries
+
+13
+00:00:41,540 --> 00:00:45,170
+to be run on Spark. There's the
+abstraction schemaRDD,
+
+14
+00:00:45,170 --> 00:00:48,710
+which is used to create
+
+15
+00:00:48,710 --> 00:00:52,340
+an RDD that can run SQL, HiveQL, and Scala.
+
+16
+00:00:52,340 --> 00:00:56,840
+In this lab section you are going to use SQL to find out the average weather
+
+17
+00:00:56,840 --> 00:01:00,000
+and precipitation for a given time
+period in New York.
+
+18
+00:01:00,000 --> 00:01:03,149
+Again the purpose is to demonstrate how
+to use
+
+19
+00:01:03,149 --> 00:01:06,200
+the SparkSQL libraries on Spark.
+
+20
+00:01:06,200 --> 00:01:09,600
+So our nycweather data 
+
+21
+00:01:09,600 --> 00:01:13,930
+is already on the HDFS under /tmp/labdata/sparkdata/
+
+22
+00:01:13,930 --> 00:01:19,430
+You uploaded this in a previous lab exercise. Go ahead and take a look
+
+23
+00:01:19,430 --> 00:01:24,420
+at this data. We're doing a Hadoop
+
+24
+00:01:24,420 --> 00:01:31,420
+command to view the contents of nycweather.csv
+
+25
+00:01:34,650 --> 00:01:38,090
+so there are three columns here you have
+the date
+
+26
+00:01:38,090 --> 00:01:42,460
+the mean temperature in Celsius and the
+precipitation
+
+27
+00:01:42,460 --> 00:01:45,900
+for the day. Since we already know the
+scheme here
+
+28
+00:01:45,900 --> 00:01:52,440
+we're going infer the schema using
+reflection. So let's launch
+
+29
+00:01:52,440 --> 00:01:59,440
+the spark shell and get started with this
+exercise.
+
+30
+00:02:06,619 --> 00:02:09,759
+The first thing you have to do is define
+the SQLContext
+
+31
+00:02:09,759 --> 00:02:14,690
+from the existing SparkContext, so here I
+am creating the SQLContext and I'm
+
+32
+00:02:14,690 --> 00:02:15,260
+passing
+
+33
+00:02:15,260 --> 00:02:18,830
+in sc which is the spark contenxt. We're
+going to be doing
+
+34
+00:02:18,830 --> 00:02:22,040
+our work inside the SQLContext.
+
+35
+00:02:22,040 --> 00:02:26,110
+Now you are going to have to import
+
+36
+00:02:26,110 --> 00:02:32,500
+a schemaRDD. That's what we're doing
+here. We are going to import a sqlConext.createSchemaRDD 
+
+37
+00:02:32,500 --> 00:02:35,690
+This is going to allow
+us to work with schema RDD
+
+38
+00:02:35,690 --> 00:02:38,940
+Next we're going to
+
+39
+00:02:38,940 --> 00:02:43,140
+work with a case class in Scala that defines
+
+40
+00:02:43,140 --> 00:02:46,930
+the schema type of the table. In this case we are going to call this
+
+41
+00:02:46,930 --> 00:02:50,670
+weather. The first column is going to be a
+date
+
+42
+00:02:50,670 --> 00:02:54,530
+column with a string. Second column is an integer
+
+43
+00:02:54,530 --> 00:02:57,870
+for the Celsius and the third column is the precipitation
+
+44
+00:02:57,870 --> 00:03:02,150
+as a double.
+
+45
+00:03:02,150 --> 00:03:09,150
+We can create the RDD of the weather
+object. So we are
+
+46
+00:03:11,440 --> 00:03:14,579
+loading in the text file using the
+regular SparkContext
+
+47
+00:03:14,579 --> 00:03:20,299
+loading in this CSV file and then we are going to split up the files on the commas
+
+48
+00:03:20,299 --> 00:03:24,230
+For each value, we are going to map it to our
+
+49
+00:03:24,230 --> 00:03:29,400
+case class that we created in the
+previous step. The first column
+
+50
+00:03:29,400 --> 00:03:33,329
+is going to come from w0. The second column is w1
+
+51
+00:03:34,360 --> 00:03:38,900
+and we're going to do a little trimming on it to make sure the data doesn't contain any
+
+52
+00:03:38,900 --> 00:03:45,900
+extra white spaces or anything like that.
+
+53
+00:03:48,980 --> 00:03:52,930
+So now at this point you're ready to
+create and run some queries
+
+54
+00:03:52,930 --> 00:03:56,610
+on the RDD. So we have to register
+
+55
+00:03:56,610 --> 00:04:01,700
+this RDD as a table, so we just
+
+56
+00:04:01,700 --> 00:04:04,860
+invoked the registerTempTable 
+
+57
+00:04:04,860 --> 00:04:08,060
+command, and give it the name of weather.
+
+58
+00:04:08,060 --> 00:04:11,780
+So that's going to be the name of the table when we run the 
+
+59
+00:04:11,780 --> 00:04:18,780
+query against it. Now we can
+
+60
+00:04:19,480 --> 00:04:23,220
+run the query on it. We're going to
+find
+
+61
+00:04:23,220 --> 00:04:26,770
+the hottest day with precipitation.
+
+62
+00:04:26,770 --> 00:04:31,590
+So I'm creating a hottest_with_precip
+
+63
+00:04:31,590 --> 00:04:37,950
+schemaRDD and it is going to come from SQLContxt and the next is
+
+64
+00:04:37,950 --> 00:04:41,760
+sql and then we put in the query right
+inside. So I'm doing a select * on 
+
+65
+00:04:41,760 --> 00:04:45,070
+the weather table -- that's the same table
+that we
+
+66
+00:04:45,070 --> 00:04:50,020
+registered earlier and we're going to fidn where the precipitation is greater than 
+
+67
+00:04:50,020 --> 00:04:51,280
+0 and we are going to 
+
+68
+00:04:51,280 --> 00:04:58,280
+sort it by descending so the hottest
+day is going to be on top.
+
+69
+00:05:01,430 --> 00:05:04,030
+ 
+
+70
+00:05:04,030 --> 00:05:08,540
+You have the result set that as part of the 
+
+71
+00:05:08,540 --> 00:05:13,420
+hottest_with_precip RDD.
+We're going to go ahead and print this out
+
+72
+00:05:13,420 --> 00:05:14,500
+onto the console.
+
+73
+00:05:14,500 --> 00:05:18,160
+First we are going to map it to the 
+
+74
+00:05:18,160 --> 00:05:22,660
+various column. I am going to have a date column with the first index
+
+75
+00:05:22,660 --> 00:05:25,890
+the value first index the temp column, the value of the second index the
+
+76
+00:05:25,890 --> 00:05:26,960
+precipitation.
+
+77
+00:05:26,960 --> 00:05:32,760
+Then we are going to get the top 10  dates and print it out to the console.
+
+78
+00:05:32,760 --> 00:05:36,430
+So there it is.
+
+79
+00:05:36,430 --> 00:05:41,730
+You saw how you can print it out the console. You can format it anyway you like, 
+
+80
+00:05:41,730 --> 00:05:45,540
+but essentially what we've done here is
+we took a
+
+81
+00:05:45,540 --> 00:05:49,460
+text file CSV, put into
+
+82
+00:05:49,460 --> 00:05:53,830
+a schemeRDD and ran queries against it. You can do this for any type
+
+83
+00:05:53,830 --> 00:05:55,990
+of business logic that your application
+requires.
+

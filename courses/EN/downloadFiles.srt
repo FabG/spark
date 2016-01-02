@@ -1,0 +1,147 @@
+1
+00:00:00,859 --> 00:00:03,310
+Hi, welcome to the lab setup section.
+
+2
+00:00:03,310 --> 00:00:06,879
+In this section I'm going to tell you how
+to download the lab files
+
+3
+00:00:06,879 --> 00:00:11,370
+that are necessary for completing the
+lab exercises. Make sure you have the
+
+4
+00:00:11,370 --> 00:00:12,759
+VM environment loaded up
+
+5
+00:00:12,759 --> 00:00:16,770
+from there you open up Firefox and
+navigate to the Big Data University
+
+6
+00:00:16,770 --> 00:00:17,340
+page
+
+7
+00:00:17,340 --> 00:00:21,130
+and then from there
+
+8
+00:00:21,130 --> 00:00:25,970
+make sure you go to the Spark Fundamentals
+course. Scroll down
+
+9
+00:00:25,970 --> 00:00:29,449
+to where it says the hands-on lab
+exercise.
+
+10
+00:00:29,449 --> 00:00:34,190
+The instructions to download and
+untar the lab files
+
+11
+00:00:34,190 --> 00:00:39,390
+to the specified location. Again 
+
+12
+00:00:39,390 --> 00:00:42,800
+you are going to visit this page and then click on the download link to get
+
+13
+00:00:42,800 --> 00:00:48,489
+the lab files onto your hard drive into the
+VM
+
+14
+00:00:48,489 --> 00:00:51,710
+Okay, I have already went ahead and
+downloaded this
+
+15
+00:00:51,710 --> 00:00:56,570
+and it is inside my download folder. Go
+to your
+
+16
+00:00:56,570 --> 00:01:07,190
+download folder and go ahead and extract this
+
+17
+00:01:15,440 --> 00:01:16,150
+okay
+
+18
+00:01:16,150 --> 00:01:17,250
+now go ahead
+
+19
+00:01:17,250 --> 00:01:24,250
+and copy this into the home directory
+
+20
+00:01:29,910 --> 00:01:36,910
+under virtuser. You are going to paste it into here.
+
+21
+00:01:53,410 --> 00:01:57,220
+Now that that completed, open up this labfiles folder 
+
+22
+00:01:57,220 --> 00:02:00,900
+make sure all the files in there. you
+should have five different folders
+
+23
+00:02:00,900 --> 00:02:04,600
+There is a lab solutions folder with all the
+
+24
+00:02:04,600 --> 00:02:07,640
+solutions that you can use
+
+25
+00:02:07,640 --> 00:02:11,940
+for the lab exercises with NYC taxi
+
+26
+00:02:11,940 --> 00:02:15,540
+which contains a CSV file for the taxi
+data in New York
+
+27
+00:02:15,540 --> 00:02:19,410
+and there's a subset of the file as well
+and there's also one for the weather in
+
+28
+00:02:19,410 --> 00:02:20,320
+New York City
+
+29
+00:02:20,320 --> 00:02:24,540
+as well as some data that you can use
+for the streams applications
+
+30
+00:02:24,540 --> 00:02:29,160
+which you will do in one of the lab
+exercises and there are some changes.txt
+
+31
+00:02:29,160 --> 00:02:34,440
+users.txt file and a readme file
+as well as a followers.txt
+
+32
+00:02:35,140 --> 00:02:38,560
+Make sure you have all this set up before you start your lab exercises.
+
+33
+00:02:38,560 --> 00:02:39,800
+You will need to use all these files.
+

@@ -1,0 +1,458 @@
+1
+00:00:01,010 --> 00:00:04,160
+Hi, Welcome to the lab Getting started
+with Spark.
+
+2
+00:00:04,160 --> 00:00:07,279
+In this lab exercise
+
+3
+00:00:07,279 --> 00:00:10,580
+you will be able to use the Spark shell
+with Scala and Python.
+
+4
+00:00:10,580 --> 00:00:14,210
+You get to perform basic RDD operations
+
+5
+00:00:14,210 --> 00:00:19,189
+such as actions and transformations. You
+also get to work with caching
+
+6
+00:00:19,189 --> 00:00:22,350
+in order to speed up any repeated  operations that you might have
+
+7
+00:00:22,350 --> 00:00:26,990
+Make sure your environment is ready for the lab exercise. 
+
+8
+00:00:26,990 --> 00:00:30,570
+Log into to the virtual machine. Once logged in
+
+9
+00:00:30,570 --> 00:00:36,070
+you should have a desktop similar to
+this. Before we move further,
+
+10
+00:00:36,070 --> 00:00:39,700
+we should go ahead and set up a Spark
+environment variable
+
+11
+00:00:39,700 --> 00:00:45,789
+that will allow us to quickly start  up the Spark shell. The way you can do that is edit the 
+
+12
+00:00:45,789 --> 00:00:49,059
+bash.rc file and include
+
+13
+00:00:49,059 --> 00:00:53,320
+the line exports spark_home
+
+14
+00:00:53,320 --> 00:00:57,230
+This is inside the documentation you
+can just copy and paste it into
+
+15
+00:00:57,230 --> 00:01:01,149
+this file. Don't have to worry about the other stuff just make sure this spark_home
+
+16
+00:01:01,149 --> 00:01:04,830
+is copied and pasted into here. Save and
+quit the file.
+
+17
+00:01:04,830 --> 00:01:08,810
+Now you can access the Spark shell
+using the spark_home environment
+
+18
+00:01:08,810 --> 00:01:09,320
+variable
+
+19
+00:01:09,320 --> 00:01:14,820
+So when you first started up the
+
+20
+00:01:14,820 --> 00:01:19,270
+Quickstart edition, you have to make sure to copy the lab files
+
+21
+00:01:19,270 --> 00:01:24,960
+onto the image and there was a video
+that shows how to do that prior to this
+
+22
+00:01:24,960 --> 00:01:25,610
+exercise
+
+23
+00:01:25,610 --> 00:01:29,880
+make sure you do that, if not, go ahead
+and get that done before continuing.
+
+24
+00:01:29,880 --> 00:01:33,030
+Double check that all the files are
+
+25
+00:01:33,030 --> 00:01:39,240
+inside the virtuser's home directory. The lab files contains folders
+
+26
+00:01:39,240 --> 00:01:42,360
+and files there you'll be using
+throughout the labs
+
+27
+00:01:42,360 --> 00:01:45,829
+for this course so they are five folders.
+
+28
+00:01:45,829 --> 00:01:50,810
+Some data from NYC taxi and NYC weather
+
+29
+00:01:50,810 --> 00:01:54,799
+There is also the lab solutions folder.
+
+30
+00:01:57,630 --> 00:02:00,909
+Once you have confirmed the files are there, you may close the two windows.
+
+31
+00:02:00,909 --> 00:02:05,170
+When you start up the
+
+32
+00:02:05,170 --> 00:02:08,530
+Quickstart edition image initially, Ambari will start up,
+
+33
+00:02:08,530 --> 00:02:12,140
+and when you log in what start up all the
+services for you.
+
+34
+00:02:12,140 --> 00:02:16,130
+But if that did not happen I'll show you
+how you can start the service
+
+35
+00:02:16,130 --> 00:02:20,840
+manually yourself. Go ahead and open up a web browser.
+
+36
+00:02:20,840 --> 00:02:25,500
+The login to the Ambari console
+
+37
+00:02:25,500 --> 00:02:32,500
+is admin the password is also admin.
+
+38
+00:02:37,050 --> 00:02:38,129
+So I purposely made sure
+
+39
+00:02:38,129 --> 00:02:41,739
+all the services have stopped in order to demonstrate what you can do to start it up.
+
+40
+00:02:41,739 --> 00:02:48,739
+Click on the Services menu.
+
+41
+00:02:49,900 --> 00:02:56,900
+On the left side click on actions and
+then start all.
+
+42
+00:03:04,890 --> 00:03:06,849
+You'll noticed that the services
+
+43
+00:03:06,849 --> 00:03:10,540
+are now starting. You can click on it to
+see the details of each
+
+44
+00:03:10,540 --> 00:03:17,540
+individual components being started.
+
+45
+00:03:24,600 --> 00:03:27,100
+On the top
+
+46
+00:03:27,100 --> 00:03:30,260
+you see the operations. There is one background operation running.
+
+47
+00:03:30,260 --> 00:03:37,239
+So that I can tell it is still working.
+
+48
+00:03:37,239 --> 00:03:41,340
+It will take several minutes for all the
+services to start up, so I'm
+
+49
+00:03:41,340 --> 00:03:48,340
+going to speed up the video to the part
+where it completes.
+
+50
+00:04:01,230 --> 00:04:05,300
+Alright so the services have all started. Go ahead and get out at this window
+
+51
+00:04:05,300 --> 00:04:09,660
+and you can double check that everything has started. In particular you want to make
+
+52
+00:04:09,660 --> 00:04:10,819
+sure Spark is up.
+
+53
+00:04:10,819 --> 00:04:16,389
+You may exit out of the Ambari console,   we don't need to use it anymore.
+
+54
+00:04:16,389 --> 00:04:20,590
+So the next part of the lab exercise,
+
+55
+00:04:20,590 --> 00:04:24,120
+you will start with working with the
+Spark
+
+56
+00:04:24,120 --> 00:04:29,580
+scala shell. So open up a new terminal
+and we're going to copy
+
+57
+00:04:29,580 --> 00:04:32,700
+the readme file that we have on our
+local system
+
+58
+00:04:32,700 --> 00:04:36,220
+into the HDFS tmp directory.
+
+59
+00:04:36,220 --> 00:04:43,220
+You can copy and paste the code into
+here or type it up.
+
+60
+00:04:43,510 --> 00:04:47,160
+but essentially you will be copying this
+
+61
+00:04:47,160 --> 00:04:50,410
+README.md file into the HDFS
+
+62
+00:04:50,410 --> 00:04:53,700
+/tmp directory.
+
+63
+00:04:53,700 --> 00:04:56,800
+We're going to be working with the README file
+
+64
+00:04:56,800 --> 00:05:03,800
+in the first part of this exercise.
+
+65
+00:05:07,169 --> 00:05:11,520
+I'm showing you here what it would take if we did not set up the spark_home
+
+66
+00:05:11,520 --> 00:05:12,190
+directory
+
+67
+00:05:12,190 --> 00:05:16,850
+you have to manually type out the
+
+68
+00:05:16,850 --> 00:05:19,850
+spark_home directory
+
+69
+00:05:19,850 --> 00:05:24,370
+in order to access the spark shell. I forgot the bin directory there too.
+
+70
+00:05:24,370 --> 00:05:28,270
+You can see how this might take some
+time. Because we have set up
+
+71
+00:05:28,270 --> 00:05:31,780
+spark_home, subsequent steps will later
+use that spark_home
+
+72
+00:05:31,780 --> 00:05:37,139
+variable. I went ahead to start up the
+spark shell
+
+73
+00:05:37,139 --> 00:05:42,940
+directory located under the bin
+directory. The spark shell is using Scala.
+
+74
+00:05:42,940 --> 00:05:48,320
+When you start up a shell, a spark context is initialize for you to use
+
+75
+00:05:48,320 --> 00:05:51,590
+If you do sc, period, and the tab button, 
+
+76
+00:05:51,590 --> 00:05:58,590
+you are going to see a number of functions that are available within the spark context.
+
+77
+00:06:01,250 --> 00:06:05,020
+Now I'm going to create an RDD file, RDD
+
+78
+00:06:05,020 --> 00:06:08,970
+from the file README which we have
+already uploaded to HDFS
+
+79
+00:06:08,970 --> 00:06:13,240
+and that is created using the spark context .textFile
+
+80
+00:06:13,240 --> 00:06:18,960
+As you know
+
+81
+00:06:18,960 --> 00:06:22,320
+the initial operation is a transformation,
+
+82
+00:06:22,320 --> 00:06:26,780
+so nothing actually happens. We're just
+telling it that we want to create a readme 
+
+83
+00:06:27,290 --> 00:06:31,960
+RDD. Now we just invoke the 
+
+84
+00:06:31,960 --> 00:06:35,560
+readme.count() action which
+counts the number line
+
+85
+00:06:35,560 --> 00:06:39,120
+from that RDD. There's 141 lines.
+
+86
+00:06:39,120 --> 00:06:43,490
+And by doing the count() and then also the first(),
+
+87
+00:06:43,490 --> 00:06:46,730
+we have invoked some actions. These actions
+
+88
+00:06:46,730 --> 00:06:50,220
+were executed against the RDD readme
+
+89
+00:06:50,220 --> 00:06:55,140
+that we created. So the first line in the
+file is the Apache Spark line,
+
+90
+00:06:55,140 --> 00:07:01,190
+as you can see
+
+91
+00:07:01,190 --> 00:07:05,120
+Now we can do some transformations,
+additional transformations to filter out
+
+92
+00:07:05,120 --> 00:07:10,290
+lines that contain Spark. So I'm
+calling the filter
+
+93
+00:07:10,290 --> 00:07:13,300
+transformation and then for the
+
+94
+00:07:13,300 --> 00:07:17,590
+lines that contains the keywords spark
+keep it.
+
+95
+00:07:17,590 --> 00:07:22,000
+So we're filtering everything out to the lines that contains
+
+96
+00:07:22,000 --> 00:07:25,310
+spark. So Iran that transformation.
+
+97
+00:07:25,310 --> 00:07:31,570
+Additionally you can actually
+
+98
+00:07:31,570 --> 00:07:35,190
+chain together transformation and action
+on the same line.
+
+99
+00:07:35,190 --> 00:07:38,550
+So here I did the filter
+
+100
+00:07:38,550 --> 00:07:42,460
+with this word Spark and I chained it
+together with the count
+
+101
+00:07:42,460 --> 00:07:45,760
+action. You immediately get a return back.
+
+102
+00:07:45,760 --> 00:07:49,260
+As you can see
+
+103
+00:07:49,260 --> 00:07:54,630
+there's 21 lines with spark
+
+104
+00:07:54,630 --> 00:07:58,510
+Sometimes the scala shell will not return back to the prompt. If you see it happen like that,
+
+105
+00:07:58,510 --> 00:08:02,040
+go ahead and hit the Return key or the Enter key and you will bring it back
+
+106
+00:08:02,040 --> 00:08:02,500
+to the prompt.
+

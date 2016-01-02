@@ -1,0 +1,83 @@
+1
+00:00:01,160 --> 00:00:04,009
+So for this last section, we're going to
+talk briefly about
+
+2
+00:00:04,009 --> 00:00:08,860
+Spark caching. Spark caching is useful to
+access repeated data much quicker
+
+3
+00:00:08,860 --> 00:00:12,380
+Both Python and Scala uses the same commands,
+
+4
+00:00:12,380 --> 00:00:16,990
+so we can input the following
+commands in any of these two shells
+
+5
+00:00:16,990 --> 00:00:20,180
+so as a simple example we're going to
+
+6
+00:00:20,180 --> 00:00:25,699
+mark our linesWithSpark dataset, the
+one we created earlier
+
+7
+00:00:25,699 --> 00:00:30,119
+to cache. Now remember when we do that is only a transformation action
+
+8
+00:00:30,119 --> 00:00:34,579
+or transformation operation, I should say, so it hasn't been cached yet. I have to
+
+9
+00:00:34,579 --> 00:00:38,129
+run some type of action. In this case, I'm going to call count(). 
+
+10
+00:00:38,129 --> 00:00:41,860
+so the first count() was invoked 
+
+11
+00:00:41,860 --> 00:00:45,149
+and that counts and returns a value but also caches
+
+12
+00:00:45,149 --> 00:00:48,680
+the dataset. Then you run the count() again
+
+13
+00:00:48,680 --> 00:00:53,469
+the second time around you notice it'll
+be a little bit faster, but again we're
+
+14
+00:00:53,469 --> 00:00:56,100
+working with a small small small dataset
+
+15
+00:00:56,100 --> 00:01:00,879
+so you won't see much changed but if the
+dataset is indeed very large
+
+16
+00:01:00,879 --> 00:01:06,619
+then caching would provide a lot of benefits. This concludes this
+
+17
+00:01:06,619 --> 00:01:10,070
+lab exercise 1. Go ahead and quit out
+
+18
+00:01:10,070 --> 00:01:13,369
+of both of these shells, by using the CTRL+D
+
+19
+00:01:13,369 --> 00:01:15,680
+key combination. That is going to stop
+everything.
+

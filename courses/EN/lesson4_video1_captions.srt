@@ -1,0 +1,295 @@
+1
+00:00:01,110 --> 00:00:05,810
+Hi. Welcome to the Spark Fundamentals course.
+This lesson will cover the Introduction to
+
+2
+00:00:05,810 --> 00:00:10,780
+the Spark libraries.
+
+3
+00:00:10,780 --> 00:00:14,679
+After completing this lesson, you should be
+able to understand and use the various Spark
+
+4
+00:00:14,679 --> 00:00:21,679
+libraries including SparkSQL, Spark Streaming,
+MLlib and GraphX
+
+5
+00:00:25,090 --> 00:00:30,070
+Spark comes with libraries that you can utilize
+for specific use cases. These libraries are
+
+6
+00:00:30,070 --> 00:00:35,360
+an extension of the Spark Core API. Any improvements
+made to the core will automatically take effect
+
+7
+00:00:35,360 --> 00:00:41,000
+with these libraries. One of the big benefits
+of Spark is that there is little overhead
+
+8
+00:00:41,000 --> 00:00:46,560
+to use these libraries with Spark as they
+are tightly integrated. The rest of this lesson
+
+9
+00:00:46,560 --> 00:00:51,390
+will cover on a high level, each of these
+libraries and their capabilities. The main
+
+10
+00:00:51,390 --> 00:00:58,149
+focus will be on Scala with specific callouts
+to Java or Python if there are major differences.
+
+11
+00:00:58,149 --> 00:01:05,149
+The four libraries are Spark SQL, Spark Streaming,
+MLlib, and GraphX.
+
+12
+00:01:07,780 --> 00:01:12,950
+Spark SQL allows you to write relational queries
+that are expressed in either SQL, HiveQL,
+
+13
+00:01:12,950 --> 00:01:19,950
+or Scala to be executed using Spark. Spark
+SQL has a new RDD called the SchemaRDD. The
+
+14
+00:01:20,820 --> 00:01:25,900
+SchemaRDD consists of rows objects and a schema
+that describes the type of data in each column
+
+15
+00:01:25,900 --> 00:01:32,340
+in the row. You can think of this as a table
+in a traditional relational database.
+
+16
+00:01:32,340 --> 00:01:39,250
+You create a SchemaRDD from existing RDDs,
+a Parquet file, a JSON dataset, or using HiveQL
+
+17
+00:01:39,250 --> 00:01:44,600
+to query against the data stored in Hive.
+You can write Spark SQL application using
+
+18
+00:01:44,600 --> 00:01:49,549
+Scala, Java or Python.
+
+19
+00:01:49,549 --> 00:01:55,799
+The SQLContext is created from the SparkContext.
+You can see here that in Scala, the sqlContext
+
+20
+00:01:55,799 --> 00:02:02,310
+is created from the SparkContext. In Java,
+you create the JavaSQLContext from the JavaSparkContext.
+
+21
+00:02:02,310 --> 00:02:06,670
+In Python, you also do the same.
+
+22
+00:02:06,670 --> 00:02:13,650
+There is a new RDD, called the SchemaRDD that
+you use with Spark SQL. In Scala only, you
+
+23
+00:02:13,650 --> 00:02:19,170
+have to import a library to convert an existing
+RDD to a SchemaRDD. For the others, you do
+
+24
+00:02:19,170 --> 00:02:23,810
+not need to import a library to work with
+the Schema RDD.
+
+25
+00:02:23,810 --> 00:02:29,480
+So how do these SchemaRDDs get created? There
+are two ways you can do this.
+
+26
+00:02:29,480 --> 00:02:35,000
+The first method uses reflection to infer
+the schema of the RDD. This leads to a more
+
+27
+00:02:35,000 --> 00:02:41,390
+concise code and works well when you already
+know the schema while writing your Spark application.
+
+28
+00:02:41,390 --> 00:02:46,560
+The second method uses a programmatic interface
+to construct a schema and then apply that
+
+29
+00:02:46,560 --> 00:02:51,120
+to an existing RDD. This method gives you
+more control when you don't know the schema
+
+30
+00:02:51,120 --> 00:02:58,120
+of the RDD until runtime. The next two slides
+will cover these two methods in more detail.
+
+31
+00:02:59,569 --> 00:03:04,890
+The first of the two methods used to determine
+the schema of the RDD is to use reflection.
+
+32
+00:03:04,890 --> 00:03:11,120
+In this scenario, use the case class in Scala
+to define the schema of the table. The arguments
+
+33
+00:03:11,120 --> 00:03:16,349
+of the case class are read using reflection
+and becomes the names of the columns.
+
+34
+00:03:16,349 --> 00:03:21,670
+Let's go over the code shown on the slide.
+First thing is to create the RDD of the person
+
+35
+00:03:21,670 --> 00:03:23,410
+object.
+
+36
+00:03:23,410 --> 00:03:28,180
+You load the text file in using the textFile
+method. Then you invoke the map transformation
+
+37
+00:03:28,180 --> 00:03:33,980
+to split the elements on a comma to get the
+individual columns of name and age. The final
+
+38
+00:03:33,980 --> 00:03:39,440
+transformation creates the Person object based
+on the elements.
+
+39
+00:03:39,440 --> 00:03:43,430
+Next you register the people RDD that you
+just created by loading in the text file and
+
+40
+00:03:43,430 --> 00:03:47,569
+performing the transformation as a table.
+
+41
+00:03:47,569 --> 00:03:53,849
+Once the RDD is a table, you use the sql method
+provided by SQLContext to run SQL statements.
+
+42
+00:03:53,849 --> 00:03:58,180
+The example here selects from the people table,
+the schemaRDD.
+
+43
+00:03:58,180 --> 00:04:04,629
+Finally, the results that comes out from the
+select statement is also a SchemaRDD.
+
+44
+00:04:04,629 --> 00:04:11,530
+That RDD, teenagers on our slide, can run
+normal RDD operations.
+
+45
+00:04:11,530 --> 00:04:16,720
+The programmatic interface is used when cannot
+define the case classes ahead of time. For
+
+46
+00:04:16,720 --> 00:04:21,509
+example, when the structure of records is
+encoded in a string or a text dataset will
+
+47
+00:04:21,509 --> 00:04:25,699
+be parsed and fields will be projected different
+for different users.
+
+48
+00:04:25,699 --> 00:04:30,439
+A schemaRDD is created with three steps.
+
+49
+00:04:30,439 --> 00:04:36,819
+The first is to create an RDD of Rows from
+the original RDD. In the example, we create
+
+50
+00:04:36,819 --> 00:04:41,860
+a schemaString of name and age.
+
+51
+00:04:41,860 --> 00:04:47,879
+The second step is to create the schema using
+the RDD from step one. The schema is represented
+
+52
+00:04:47,879 --> 00:04:53,119
+by a StructType that takes the schemaString
+from the first step and splits it up into
+
+53
+00:04:53,119 --> 00:04:58,830
+StructFields. In the example, the schema is
+created using the StructType by splitting
+
+54
+00:04:58,830 --> 00:05:05,219
+the name and age schemaString and mapping
+it to the StructFields, name and age.
+
+55
+00:05:05,219 --> 00:05:12,219
+The third step convert records of the RDD
+of people to Row objects. Then you apply the
+
+56
+00:05:12,419 --> 00:05:15,599
+schema to the row RDD.
+
+57
+00:05:15,599 --> 00:05:20,779
+Once you have your SchemaRDD, you register
+that RDD as a table and then you run sql statements
+
+58
+00:05:20,779 --> 00:05:24,199
+against it using the sql method.
+
+59
+00:05:24,199 --> 00:05:28,740
+The results are returned as the SchemaRDD
+and you can run any normal RDD operation on
+
+60
+00:05:28,740 --> 00:05:35,139
+it. In the example, we select the name from
+the people table, which is the SchemaRDD.
+
+61
+00:05:35,139 --> 00:05:36,550
+Then we print it out on the console.
+

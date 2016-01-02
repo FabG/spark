@@ -1,0 +1,201 @@
+1
+00:00:00,659 --> 00:00:03,300
+Now we're going to look at Spark's shared variables.
+
+2
+00:00:03,300 --> 00:00:07,470
+There's two types that we're going to
+talk about today. We have the broadcast
+
+3
+00:00:07,470 --> 00:00:08,099
+variable
+
+4
+00:00:08,099 --> 00:00:12,030
+and accumulators. Broadcast variables are useful for
+
+5
+00:00:12,030 --> 00:00:15,360
+when you have a large dataset you want
+to use across the worker nodes.
+
+6
+00:00:15,360 --> 00:00:19,470
+Instead of having to send out the entire
+dataset, you just send out the variable.
+
+7
+00:00:19,470 --> 00:00:23,380
+So here I am going to create a simple
+
+8
+00:00:23,380 --> 00:00:30,380
+broadcast variable with an array three
+integers
+
+9
+00:00:34,890 --> 00:00:38,120
+and then to get a value, you simply call
+the value
+
+10
+00:00:38,120 --> 00:00:42,250
+function. Again
+
+11
+00:00:42,250 --> 00:00:47,190
+useful for using with large datasets so
+you don't have to send out across the entire
+
+12
+00:00:47,190 --> 00:00:47,820
+cluster.
+
+13
+00:00:47,820 --> 00:00:51,650
+Accumulators are another type of variables
+
+14
+00:00:51,650 --> 00:00:54,860
+that can be added through an associative
+operation.
+
+15
+00:00:54,860 --> 00:00:58,839
+It is used to implement counters and
+sums, efficiently in parallel.
+
+16
+00:00:58,839 --> 00:01:01,920
+Spark natively supports numeric types
+
+17
+00:01:01,920 --> 00:01:04,989
+accumulators and standard mutable
+collections.
+
+18
+00:01:04,989 --> 00:01:09,960
+Programmers can extend these types for
+new types. Only the driver can read the
+
+19
+00:01:09,960 --> 00:01:10,680
+values
+
+20
+00:01:10,680 --> 00:01:13,840
+of the accumulators. The worker nodes can only invoke
+
+21
+00:01:13,840 --> 00:01:18,270
+or increment the value. So here I create
+a simple accumulator
+
+22
+00:01:18,270 --> 00:01:21,649
+with the value of 0.
+
+23
+00:01:21,649 --> 00:01:25,420
+So it starts up at zero and now we are going to test this out
+
+24
+00:01:25,420 --> 00:01:28,950
+by creating an array of four integers: 
+
+25
+00:01:28,950 --> 00:01:32,570
+one two three and four and then we're going to iterate through the array.
+
+26
+00:01:32,570 --> 00:01:35,570
+So for each element of the array, add the
+
+27
+00:01:35,570 --> 00:01:39,020
+the value to the accumulator, so
+
+28
+00:01:39,020 --> 00:01:43,899
+essentially we're going to sum up the
+values of the array into the accumulator.
+
+29
+00:01:43,899 --> 00:01:46,950
+variable. Go ahead and run this
+
+30
+00:01:46,950 --> 00:01:50,070
+to create and
+
+31
+00:01:50,070 --> 00:01:57,070
+increment the accumulator.
+
+32
+00:01:58,619 --> 00:02:01,969
+So once that is done, the accumulator values has been
+
+33
+00:02:01,969 --> 00:02:06,210
+incremented already. To see the value
+you also
+
+34
+00:02:06,210 --> 00:02:09,349
+call the value() operator and you'll see 10
+
+35
+00:02:09,349 --> 00:02:12,920
+the sum of all the array elements total up to 10. Again
+
+36
+00:02:12,920 --> 00:02:16,230
+this command to get the value of the 
+
+37
+00:02:16,230 --> 00:02:20,319
+accumulator can only be invoked on the driver side
+
+38
+00:02:20,319 --> 00:02:23,970
+The worker nodes can only increment or add 
+
+39
+00:02:23,970 --> 00:02:27,970
+to the accumulator. They cannot see the 
+value on the accumulator.
+
+40
+00:02:27,970 --> 00:02:33,660
+Finally, we are going take a quick look at
+the
+
+41
+00:02:33,660 --> 00:02:36,790
+key-value pair. We've seen this
+already with the
+
+42
+00:02:36,790 --> 00:02:40,780
+joined RDD.  You can create a key/value pair by
+
+43
+00:02:40,780 --> 00:02:44,489
+just putting it in the parentheses like
+
+44
+00:02:44,489 --> 00:02:49,349
+I'm doing here and then to access it the
+individual elements it starts with the
+
+45
+00:02:49,349 --> 00:02:53,450
+._ notation. Index 1 is at the one and index 2 is at
+
+46
+00:02:53,450 --> 00:02:55,840
+the 2, so it starts at the one index.
+
