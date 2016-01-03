@@ -45,9 +45,6 @@ object parseCL {
 
     /* Actions */
 
-   /* Export to file the filtered lines */
-   filteredRecTypeData.saveAsTextFile(outputFile)
-
 
 
     /* Transformation: only keep fields of value */
@@ -59,6 +56,13 @@ object parseCL {
     /* Plus some normalized fields: */
     /* 23=(All,FN,Org,Street1), 24=(LN,Title,Street2), 25=Phone, 26=PhoneExtension */
     /* 27=first6 Digits Phone, 28=Location */
+    val indicesColumns = Array(0,1,2,3,5,6,8,9,10,12,13,14,15,16,17)
+
+    val selectedColumns = filteredRecTypeData.map(array => indicesColumns.map(array))
+
+
+   /* Export to file the filtered lines */
+   selectedColumns.saveAsTextFile(outputFile)
 
 
    
