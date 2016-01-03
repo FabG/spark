@@ -1,0 +1,21 @@
+[0m[[0minfo[0m] [0mPackaging /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/change-logs-poc_2.11-0.1.jar ...[0m
+[0m[[0mdebug[0m] [0mInput file mappings:[0m
+[0m[[0mdebug[0m] [0m	parseCL$$anonfun$7.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$$anonfun$7.class[0m
+[0m[[0mdebug[0m] [0m	parseCL$$anonfun$6.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$$anonfun$6.class[0m
+[0m[[0mdebug[0m] [0m	parseCL$.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$.class[0m
+[0m[[0mdebug[0m] [0m	parseCL$$anonfun$3.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$$anonfun$3.class[0m
+[0m[[0mdebug[0m] [0m	parseCL$$anonfun$5.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$$anonfun$5.class[0m
+[0m[[0mdebug[0m] [0m	parseCL$$anonfun$2.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$$anonfun$2.class[0m
+[0m[[0mdebug[0m] [0m	parseCL.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL.class[0m
+[0m[[0mdebug[0m] [0m	parseCL$$anonfun$4.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$$anonfun$4.class[0m
+[0m[[0mdebug[0m] [0m	parseCL$$anonfun$1.class[0m
+[0m[[0mdebug[0m] [0m	  /Users/Fab/Repositories/spark/changelogs-poc/target/scala-2.11/classes/parseCL$$anonfun$1.class[0m
+[0m[[0minfo[0m] [0mDone packaging.[0m

@@ -1,0 +1,26 @@
+/* Simple Scala proof of concept to parse our Change Logs file */
+/* Author: Fabrice Guillaume */
+/* Date: Jan 02 2016 */
+
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkContext._
+import org.apache.spark.SparkConf
+
+object parseCL {
+  def main(args: Array[String]) {
+    /* Input file (ChangeLogs TSV file) */
+    val changeLogsFile = "./input/users.contact-changes.1000-users_sample10.tsv"
+
+    /* Spark Conf and Spark Context */
+    val conf = new SparkConf().setAppName("Change Logs Parser POC")
+    val sc = new SparkContext(conf)
+
+    /* Transformations */
+    val changeLogsData = sc.textFile(changeLogsFile, 2).cache()
+    val numNames = changeLogsData.filter(line => line.contains("keithd@tushaus.com")).count()
+    val numPhones = changeLogsData.filter(line => line.contains("(414) 416-4170")).count()
+
+    /* Actions */
+    println("Lines with name: %s, Lines with phone: %s".format(numNames, numPhones))
+  }
+}
