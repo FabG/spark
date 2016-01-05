@@ -5,18 +5,22 @@
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
-import java.text.SimpleDateFormat
  
 object parseCL {
+  // case class needs to be defined outside of the method needing it 
+  // or it will fail on the ".toDF().registerTempTable compilation with SBT - although this works in spark-shell...
+  case class ContactInfo(cb_user_id: String, cb_contact_id: String, change_type: Short, record_type: Short, 
+    source: Short, raw_col_1: String, raw_col_2: String)
+
   def main(args: Array[String]) {
-    // Spark Conf and Spark Context
+    // Spark Conf and Spark Core Context
     val conf = new SparkConf().setAppName("Change Logs Parser POC")
     val sc = new SparkContext(conf)
+
+    // Spark SQL Context
     val sqlContext= new org.apache.spark.sql.SQLContext(sc)
     // Import implicits *** to keep here AFTER the sqlContect is created - don't move in header
-    //import sqlContext.implicits._
-    //import sqlContext._
-    import sqlContext.implicits
+    import sqlContext.implicits._
 
 
     // Input file (ChangeLogs TSV file)
@@ -64,13 +68,14 @@ object parseCL {
 
     // contact Table: 7 columns
     //   cb_user_id|cb_contact_id|change_type|record_type|source|raw_col_1|raw_col_2
-    case class ContactInfo(cb_user_id: String, cb_contact_id: String, change_type: Short, record_type: Short, 
-      source: Short, raw_col_1: String, raw_col_2: String)
+    // case class ContactInfo(cb_user_id: String, cb_contact_id: String, change_type: Short, record_type: Short, 
+    //   source: Short, raw_col_1: String, raw_col_2: String)
 
     // Create an RDD of Person objects and register it as a table
     val contact = filteredRecTypeData.map(p => ContactInfo(p(1),p(0),p(8).trim.toShort,p(2).trim.toShort,
       p(10).trim.toShort,p(12),p(13)))
 
+    // Note: a DataFrame is equivalent to a relational table in Spark SQL
     contact.toDF().registerTempTable("contact")
 
     // Now run SQL queries against our newly created Temp Table
@@ -81,7 +86,6 @@ object parseCL {
     val userContactCompanies = sqlContext.sql("SELECT cb_user_id, cb_contact_id, change_type, raw_col_1 as Company, count(*) as Count from contact where record_type = 13 group by cb_user_id, cb_contact_id, change_type, raw_col_1")
     val userContactTitles = sqlContext.sql("SELECT cb_user_id, cb_contact_id, change_type, raw_col_2 as Title, count(*) as Count from contact where record_type = 13 group by cb_user_id, cb_contact_id, change_type, raw_col_2")
 
-    val userContactSummary = sqlContext.sql("SELECT * from contact group by cb_user_id, cb_contact_id, change_type, record_type")
     println("Results from SparkSQL:")
     println(" - First Names")
     userContactFirstNames.collect().foreach(println)
@@ -96,11 +100,12 @@ object parseCL {
     println(" - Titles")
     userContactTitles.collect().foreach(println)
 
-    // Export to file the filtered lines
     // Output File
-    val outputFile = "./output/parsed.contact-changes_sample10.tsv"
+    val outputPath = "./output"
 
-    userContactSummary.saveAsTextFile(outputFile)
+    // Export to CSV file the filtered lines using the Ddatabricks spark-csv library
+    // userContactSummary.saveAsTextFile(outputPath)
+    //userContactSummary.write.format("com.databricks.spark.csv").save(outputPath)
    
   }
 }

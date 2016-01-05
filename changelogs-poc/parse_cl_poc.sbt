@@ -1,6 +1,7 @@
 name := "Change Logs POC"
 version := "0.1"
-scalaVersion := "2.11.7"
+scalaVersion := "2.10.4"
+//scalaVersion := "2.11.7"
 
 // additional libraries
 libraryDependencies ++= Seq(
